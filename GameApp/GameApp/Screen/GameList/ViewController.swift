@@ -13,7 +13,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        networkManager.request(endpoint: .games, type: Games.self) { result in
+        networkManager.request(endpoint: .searchGame(searchText: "CSGO"), type: GameSearchResult.self) { result in
             switch result {
             case .success(let response):
                 print(response)
