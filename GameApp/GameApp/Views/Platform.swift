@@ -7,14 +7,11 @@
 
 import UIKit
 
-class Platform: UIView {
 
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
+final class Platform: NibView {
+    @IBOutlet private weak var platformName: UILabel!
+    
+    func configure(name: String) {
+        platformName.text = name
     }
-    */
-
 }
