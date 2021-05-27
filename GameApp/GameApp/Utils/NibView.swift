@@ -20,8 +20,8 @@ class NibView: UIView {
 
     func fromNib() {
         if let contentView = Bundle.main.loadNibNamed(String(describing: type(of: self)),
-                                                      owner: self,
-                                                      options: nil)?.first as? UIView {
+            owner: self,
+            options: nil)?.first as? UIView {
             addSubview(contentView)
             contentView.frame = self.bounds
         }

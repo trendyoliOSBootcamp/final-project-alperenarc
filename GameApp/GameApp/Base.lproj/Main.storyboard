@@ -15,8 +15,52 @@
                     <view key="view" contentMode="scaleToFill" id="82p-Tz-vql">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="YoR-mN-dn0">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="68"/>
+                                <color key="backgroundColor" red="0.082352941176470587" green="0.082352941176470587" blue="0.082352941176470587" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="68" id="ZyX-PS-hMG"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="gqF-X5-5jY">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells/>
+                                <connections>
+                                    <outlet property="dataSource" destination="RCn-nn-7Ga" id="ls9-Xc-nWr"/>
+                                    <outlet property="delegate" destination="RCn-nn-7Ga" id="t9h-ps-eHU"/>
+                                </connections>
+                            </collectionView>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="wsu-HJ-hG8">
+                                <rect key="frame" x="0.0" y="84" width="414" height="641"/>
+                                <color key="backgroundColor" red="0.082352941176470587" green="0.082352941176470587" blue="0.082352941176470587" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="SmH-W9-IlZ">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells/>
+                                <connections>
+                                    <outlet property="dataSource" destination="RCn-nn-7Ga" id="S1r-9P-7Y1"/>
+                                    <outlet property="delegate" destination="RCn-nn-7Ga" id="SxR-wJ-G8E"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="ZRO-U6-nII"/>
                         <color key="backgroundColor" red="0.082352941176470587" green="0.082352941176470587" blue="0.082352941176470587" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="wsu-HJ-hG8" firstAttribute="leading" secondItem="ZRO-U6-nII" secondAttribute="leading" id="63H-Bz-b91"/>
+                            <constraint firstItem="ZRO-U6-nII" firstAttribute="trailing" secondItem="YoR-mN-dn0" secondAttribute="trailing" id="IGx-cZ-LtO"/>
+                            <constraint firstItem="ZRO-U6-nII" firstAttribute="trailing" secondItem="wsu-HJ-hG8" secondAttribute="trailing" id="LQf-1U-veJ"/>
+                            <constraint firstItem="YoR-mN-dn0" firstAttribute="top" secondItem="ZRO-U6-nII" secondAttribute="top" id="PBk-HA-KUJ"/>
+                            <constraint firstItem="wsu-HJ-hG8" firstAttribute="top" secondItem="YoR-mN-dn0" secondAttribute="bottom" constant="16" id="PWi-gh-yfY"/>
+                            <constraint firstItem="YoR-mN-dn0" firstAttribute="leading" secondItem="ZRO-U6-nII" secondAttribute="leading" id="VEz-5I-HGu"/>
+                            <constraint firstItem="ZRO-U6-nII" firstAttribute="bottom" secondItem="wsu-HJ-hG8" secondAttribute="bottom" id="tB7-eR-Ja8"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Games" id="M27-gJ-Np6">
                         <barButtonItem key="rightBarButtonItem" title="Item" style="plain" id="5eA-xq-kUr">
@@ -27,6 +71,10 @@
                             </button>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="categoryCollectionView" destination="YoR-mN-dn0" id="xCa-zJ-NyW"/>
+                        <outlet property="gamesCollectionView" destination="wsu-HJ-hG8" id="Kjw-U3-7PA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XDO-0F-Zgi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

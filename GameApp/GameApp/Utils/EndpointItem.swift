@@ -8,7 +8,7 @@
 import CoreNetwork
 
 enum EndpointItem: Endpoint {
-    case games
+    case games(page: String)
     case game(id: String)
     case searchGame(searchText: String)
     case categories
@@ -17,7 +17,7 @@ enum EndpointItem: Endpoint {
     var apiKey: String { Keys.ApiKey }
     var path: String {
         switch self {
-        case .games: return "games?key=\(apiKey)"
+        case .games(let page): return "games?key=\(apiKey)&page=\(page)"
         case .game(let id): return "games/\(id)?key=\(apiKey)"
         case .searchGame(let searchText): return "games?key=\(apiKey)&search=\(searchText)"
         case .categories: return "platforms/lists/parents?key=\(apiKey)"

@@ -18,7 +18,6 @@ struct GameSearchResult: Codable {
 struct SearchResult: Codable {
     let slug, name: String?
     let playtime: Int?
-    let platforms: [SearchResultPlatform]?
     let stores: [SearchResultStore]?
     let released: String?
     let tba: Bool?
@@ -37,7 +36,6 @@ struct SearchResult: Codable {
     let esrbRating: SearchResultEsrbRating?
     let reviewsCount: Int?
     let shortScreenshots: [SearchResultShortScreenshot]?
-    let parentPlatforms: [SearchResultPlatform]?
     let genres: [SearchResultGenre]?
     let communityRating: Int?
 }
@@ -58,11 +56,6 @@ struct SearchResultEsrbRating: Codable {
 struct SearchResultGenre: Codable {
     let id: Int?
     let name, slug: String?
-}
-
-// MARK: - Platform
-struct SearchResultPlatform: Codable {
-    let platform: Genre?
 }
 
 // MARK: - Rating

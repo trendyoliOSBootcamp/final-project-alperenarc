@@ -36,7 +36,7 @@ struct Game: Codable {
     let saturatedColor, dominantColor: String?
     let parentPlatforms: [ParentPlatform]?
     let platforms: [PlatformElement]?
-    let stores: [Store]?
+    
     let developers, genres, tags, publishers: [Developer]?
     let esrbRating: EsrbRating?
     let descriptionRaw: String?
