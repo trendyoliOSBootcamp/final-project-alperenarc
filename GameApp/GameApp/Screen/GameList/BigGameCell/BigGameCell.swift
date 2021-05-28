@@ -8,7 +8,7 @@
 import UIKit
 import SDWebImage
 
-extension UICollectionViewCell {
+extension BigGameCell {
     enum Constants {
         static let wishListButtonPadding: CGFloat = 10
         static let containerCornerRadius: CGFloat = 8
@@ -29,8 +29,8 @@ final class BigGameCell: UICollectionViewCell {
     @IBOutlet private weak var playTime: UILabel!
     @IBOutlet private weak var metacritic: UILabel!
     @IBOutlet private weak var metacriticContainer: UIView!
-    @IBOutlet private weak var wishListView: UIView!
-    @IBOutlet private weak var wishListButton: UIButton!
+    @IBOutlet weak var wishListView: UIView!
+    @IBOutlet weak var wishListButton: UIButton!
     @IBOutlet private weak var descriptionContainer: UIView!
     @IBOutlet private weak var genreView: UIStackView!
     @IBOutlet private weak var releaseDateView: UIStackView!
@@ -180,5 +180,14 @@ extension BigGameCell: BigGameCellViewModelDelegate {
         guard let urlString = urlString else { return }
         let photoURL = URL(string: urlString)
         self.gameImage.sd_setImage(with: photoURL)
+    }
+
+    func prepareWishListButton(wishListStatus: Bool?) {
+        guard let status = wishListStatus else { return }
+        if status {
+            wishListView.layer.backgroundColor = .init(srgbRed: 93/255, green: 197/255, blue: 52/255, alpha: 1)
+        } else {
+            wishListView.layer.backgroundColor = .init(srgbRed: 55/255, green: 55/255, blue: 55/255, alpha: 1)
+        }
     }
 }

@@ -68,10 +68,14 @@
                                 <rect key="frame" x="364" y="7" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="smallLayoutButton"/>
+                                <connections>
+                                    <action selector="cardTypeAction" destination="RCn-nn-7Ga" eventType="touchUpInside" id="C5g-f1-a7r"/>
+                                </connections>
                             </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="cardTypeButton" destination="4tA-0w-7Rv" id="SGn-mN-CA7"/>
                         <outlet property="categoryCollectionView" destination="YoR-mN-dn0" id="xCa-zJ-NyW"/>
                         <outlet property="gamesCollectionView" destination="wsu-HJ-hG8" id="Kjw-U3-7PA"/>
                     </connections>

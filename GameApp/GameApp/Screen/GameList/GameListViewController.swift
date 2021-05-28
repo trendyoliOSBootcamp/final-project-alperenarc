@@ -15,12 +15,18 @@ extension GameListViewController {
         static let categorySelectedColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 1)
         enum Cell {
             static let categoryCell = "CategoryViewCell"
-            static let categorCellHeight: CGFloat = 36
-            static let categorCellPadding: CGFloat = 16
+            static let categoryCellHeight: CGFloat = 36
+            static let categoryCellPadding: CGFloat = 16
             static let bigGameCell = "BigGameCell"
+            static let smallGameCell = "SmallGameCell"
             static let descriptionHeight: CGFloat = 159
             static let bigGameCellPadding: CGFloat = 16
             static let bigGameCellImageAspectRatio: CGFloat = 201 / 358
+            static let smallGameCellImageAspectRatio: CGFloat = 1 / 1
+            static let smallGameCellPadding: CGFloat = 16
+            static let smallGameCellNameHeight: CGFloat = 72
+            static let gameItemPadding: CGFloat = 16
+            static let categoryItemPadding: CGFloat = 12
         }
     }
 }
@@ -29,6 +35,7 @@ final class GameListViewController: UIViewController {
     private var searchController = UISearchController(searchResultsController: nil)
     @IBOutlet private weak var categoryCollectionView: UICollectionView!
     @IBOutlet weak var gamesCollectionView: UICollectionView!
+    @IBOutlet weak var cardTypeButton: UIButton!
 
     var viewModel: GameListViewModelProtocol! {
         didSet {
@@ -41,6 +48,14 @@ final class GameListViewController: UIViewController {
         viewModel.load()
         categoryCollectionView.register(UINib(nibName: Constants.Cell.categoryCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.categoryCell)
         gamesCollectionView.register(UINib(nibName: Constants.Cell.bigGameCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.bigGameCell)
+        gamesCollectionView.register(UINib(nibName: Constants.Cell.smallGameCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.smallGameCell)
+    }
+    @IBAction func cardTypeAction() {
+        viewModel.changeCardType()
+        viewModel.cardType ?
+        cardTypeButton.setImage(UIImage(named: "bigLayoutButton"), for: .normal):
+            cardTypeButton.setImage(UIImage(named: "smallLayoutButton"), for: .normal)
+        reloadGameList()
     }
 }
 
@@ -65,34 +80,70 @@ extension GameListViewController: UICollectionViewDataSource {
             }
             return cell
         } else {
-            let cell = gamesCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.Cell.bigGameCell, for: indexPath) as! BigGameCell
-            let currentGameResult = viewModel.gameResult(indexPath.row)
-            if let gameResult = currentGameResult {
-                cell.viewModel = BigGameCellViewModel(gameResult: gameResult)
+            if viewModel.cardType {
+                let cell = gamesCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.Cell.bigGameCell, for: indexPath) as! BigGameCell
+                let currentGameResult = viewModel.gameResult(indexPath.row)
+                if let gameResult = currentGameResult {
+                    cell.viewModel = BigGameCellViewModel(gameResult: gameResult, wishListStatus: viewModel.wishListContains(id: gameResult.id))
+                    cell.wishListButton.tag = indexPath.row
+                    cell.wishListButton.addTarget(self, action: #selector(addToWishList(_:)), for: .touchUpInside)
+                }
+                return cell
             }
-            return cell
+            else {
+                let cell = gamesCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.Cell.smallGameCell, for: indexPath) as! SmallGameCell
+                let currentGameResult = viewModel.gameResult(indexPath.row)
+                if let gameResult = currentGameResult {
+                    cell.configure(image: gameResult.backgroundImage, name: gameResult.name, wishListStatus: viewModel.wishListContains(id: gameResult.id))
+                    cell.wishListButton.tag = indexPath.row
+                    cell.wishListButton.addTarget(self, action: #selector(addToWishList(_:)), for: .touchUpInside)
+                }
+                return cell
+            }
         }
+    }
+
+    @objc func addToWishList(_ sender: UIButton) {
+        guard let id = viewModel.getGames[safe: sender.tag]?.id else { return }
+        viewModel.addOrRemoveWishList(id: id)
     }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension GameListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let cellWidth = view.frame.width - (Constants.Cell.bigGameCellPadding + Constants.Cell.bigGameCellPadding)
-        let imageSize = cellWidth * Constants.Cell.bigGameCellImageAspectRatio
 
         if collectionView == categoryCollectionView {
-            return .init(width: view.frame.width, height: Constants.Cell.categorCellHeight)
+            return .init(width: view.frame.width, height: Constants.Cell.categoryCellHeight)
         } else {
-            return .init(width: cellWidth, height: Constants.Cell.descriptionHeight + imageSize)
+            if viewModel.cardType {
+                let cellWidth = view.frame.width - (Constants.Cell.bigGameCellPadding + Constants.Cell.bigGameCellPadding)
+                let imageSize = cellWidth * Constants.Cell.bigGameCellImageAspectRatio
+                return .init(width: cellWidth, height: Constants.Cell.descriptionHeight + imageSize)
+            } else {
+                let cellWidth = (view.frame.width / 2) - (Constants.Cell.smallGameCellPadding + Constants.Cell.smallGameCellPadding)
+                let imageSize = cellWidth * Constants.Cell.smallGameCellImageAspectRatio
+                return .init(width: cellWidth, height: Constants.Cell.smallGameCellNameHeight + imageSize)
+            }
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        collectionView == categoryCollectionView ?
-            .init(top: Constants.Cell.categorCellPadding, left: Constants.Cell.categorCellPadding, bottom: .zero, right: .zero):
-            .init(top: .zero, left: Constants.Cell.bigGameCellPadding, bottom: .zero, right: Constants.Cell.bigGameCellPadding)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        collectionView == categoryCollectionView ? Constants.Cell.categoryItemPadding : Constants.Cell.gameItemPadding
     }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        if collectionView == categoryCollectionView {
+            return .init(top: Constants.Cell.categoryCellPadding, left: Constants.Cell.categoryCellPadding, bottom: .zero, right: .zero)
+        } else {
+            if viewModel.cardType {
+                return .init(top: .zero, left: Constants.Cell.bigGameCellPadding, bottom: .zero, right: Constants.Cell.bigGameCellPadding)
+            } else {
+                return .init(top: .zero, left: Constants.Cell.bigGameCellPadding, bottom: .zero, right: Constants.Cell.bigGameCellPadding)
+            }
+        }
+    }
+
 }
 
 // MARK: - UICollectionViewDelegate
@@ -102,10 +153,22 @@ extension GameListViewController: UICollectionViewDelegate {
         viewModel.setSelectedCategory(category: category)
         reloadCategoryList()
     }
+
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        viewModel.willDisplay(indexPath.item)
+    }
 }
 
 // MARK: - GameListViewModelDelegate
 extension GameListViewController: GameListViewModelDelegate {
+    func showLoadingView() {
+        gamesCollectionView.setLoading()
+    }
+
+    func hideLoadingView() {
+        gamesCollectionView.restore()
+    }
+
     func reloadGameList() {
         gamesCollectionView.reloadData()
     }
@@ -130,7 +193,9 @@ extension GameListViewController: GameListViewModelDelegate {
 }
 
 // MARK: - UISearchControllerDelegate
-extension GameListViewController: UISearchControllerDelegate {
-
+extension GameListViewController: UISearchBarDelegate, UISearchControllerDelegate {
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        print(searchText)
+//    }
 }
 

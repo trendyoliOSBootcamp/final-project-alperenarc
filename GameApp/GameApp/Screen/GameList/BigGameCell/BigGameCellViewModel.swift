@@ -10,6 +10,7 @@ import Foundation
 // MARK: - BigGameCellViewModelProtocol
 protocol BigGameCellViewModelProtocol {
     var delegate: BigGameCellViewModelDelegate? { get set }
+    var getWishListStatus: Bool { get }
     func load()
 }
 
@@ -23,20 +24,25 @@ protocol BigGameCellViewModelDelegate: AnyObject {
     func setBadgeLabels(name: String, index: Int)
     func prepareMetacriticLabel(metacritic: Int)
     func prepareImage(urlString: String?)
+    func prepareWishListButton(wishListStatus: Bool?)
 }
 
 // MARK: - BigGameCellViewModel
 final class BigGameCellViewModel {
     weak var delegate: BigGameCellViewModelDelegate?
     private let gameResult: GameResult?
+    private var wishListStatus: Bool = false
 
-    init(gameResult: GameResult?) {
+    init(gameResult: GameResult?, wishListStatus: Bool) {
         self.gameResult = gameResult
+        self.wishListStatus = wishListStatus
     }
 }
 
 // MARK: - BigGameCellViewModelProtocol
 extension BigGameCellViewModel: BigGameCellViewModelProtocol {
+    var getWishListStatus: Bool { self.wishListStatus }
+
     func load() {
         guard let name = gameResult?.name, let backgroundImage = gameResult?.backgroundImage, let metacritic = gameResult?.metacritic, let platforms = gameResult?.parentPlatforms else { return }
 
@@ -47,5 +53,7 @@ extension BigGameCellViewModel: BigGameCellViewModelProtocol {
         delegate?.prepareBadges(platforms: platforms)
         delegate?.preparePlayTime(playTime: gameResult?.playtime)
         delegate?.prepareNameLabel(name: name)
+        delegate?.prepareWishListButton(wishListStatus: wishListStatus)
     }
+
 }

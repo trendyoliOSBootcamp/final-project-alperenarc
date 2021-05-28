@@ -31,6 +31,9 @@
 		05899762265D95EE00A98C15 /* CategoryViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05899760265D95EE00A98C15 /* CategoryViewCell.swift */; };
 		05899763265D95EE00A98C15 /* CategoryViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 05899761265D95EE00A98C15 /* CategoryViewCell.xib */; };
 		0595FA0B265FB7B5004AE40B /* BigGameCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595FA0A265FB7B5004AE40B /* BigGameCellViewModel.swift */; };
+		0595FA13265FDD8D004AE40B /* UICollectionView+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595FA12265FDD8D004AE40B /* UICollectionView+Loading.swift */; };
+		0595FA17265FE75E004AE40B /* SmallGameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595FA15265FE75E004AE40B /* SmallGameCell.swift */; };
+		0595FA18265FE75E004AE40B /* SmallGameCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0595FA16265FE75E004AE40B /* SmallGameCell.xib */; };
 		05CA565D265E4BF800E6D5B1 /* BigGameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CA565B265E4BF800E6D5B1 /* BigGameCell.swift */; };
 		05CA565E265E4BF800E6D5B1 /* BigGameCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 05CA565C265E4BF800E6D5B1 /* BigGameCell.xib */; };
 		05CA5661265E620F00E6D5B1 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 05CA5660265E620F00E6D5B1 /* SDWebImage */; };
@@ -83,6 +86,9 @@
 		05899760265D95EE00A98C15 /* CategoryViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewCell.swift; sourceTree = "<group>"; };
 		05899761265D95EE00A98C15 /* CategoryViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryViewCell.xib; sourceTree = "<group>"; };
 		0595FA0A265FB7B5004AE40B /* BigGameCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigGameCellViewModel.swift; sourceTree = "<group>"; };
+		0595FA12265FDD8D004AE40B /* UICollectionView+Loading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Loading.swift"; sourceTree = "<group>"; };
+		0595FA15265FE75E004AE40B /* SmallGameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallGameCell.swift; sourceTree = "<group>"; };
+		0595FA16265FE75E004AE40B /* SmallGameCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallGameCell.xib; sourceTree = "<group>"; };
 		05CA565B265E4BF800E6D5B1 /* BigGameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigGameCell.swift; sourceTree = "<group>"; };
 		05CA565C265E4BF800E6D5B1 /* BigGameCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BigGameCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -138,6 +144,7 @@
 		0530D7F9265BD20700DC4382 /* GameApp */ = {
 			isa = PBXGroup;
 			children = (
+				0595FA11265FDD7A004AE40B /* Extensions */,
 				05518A78265BECD000263465 /* Models */,
 				05518A77265BECB900263465 /* Utils */,
 				05518A75265BEC4400263465 /* Screen */,
@@ -191,7 +198,8 @@
 		05518A76265BEC8F00263465 /* GameList */ = {
 			isa = PBXGroup;
 			children = (
-				05CA565A265E4BDE00E6D5B1 /* GameCell */,
+				0595FA14265FE741004AE40B /* SmallGameCell */,
+				05CA565A265E4BDE00E6D5B1 /* BigGameCell */,
 				05CA5659265E3BC700E6D5B1 /* CategoryCell */,
 				0530D7FE265BD20700DC4382 /* GameListViewController.swift */,
 				05518A81265C363F00263465 /* GameListViewModel.swift */,
@@ -204,7 +212,6 @@
 			children = (
 				05518A6E265BD52100263465 /* EndpointItem.swift */,
 				05219D70265C42B9004812C3 /* NibView.swift */,
-				0589975E265D945A00A98C15 /* Collection+Extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -228,6 +235,24 @@
 			path = WishList;
 			sourceTree = "<group>";
 		};
+		0595FA11265FDD7A004AE40B /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0589975E265D945A00A98C15 /* Collection+Extension.swift */,
+				0595FA12265FDD8D004AE40B /* UICollectionView+Loading.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		0595FA14265FE741004AE40B /* SmallGameCell */ = {
+			isa = PBXGroup;
+			children = (
+				0595FA15265FE75E004AE40B /* SmallGameCell.swift */,
+				0595FA16265FE75E004AE40B /* SmallGameCell.xib */,
+			);
+			path = SmallGameCell;
+			sourceTree = "<group>";
+		};
 		05CA5659265E3BC700E6D5B1 /* CategoryCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,14 +262,14 @@
 			path = CategoryCell;
 			sourceTree = "<group>";
 		};
-		05CA565A265E4BDE00E6D5B1 /* GameCell */ = {
+		05CA565A265E4BDE00E6D5B1 /* BigGameCell */ = {
 			isa = PBXGroup;
 			children = (
 				05CA565B265E4BF800E6D5B1 /* BigGameCell.swift */,
 				05CA565C265E4BF800E6D5B1 /* BigGameCell.xib */,
 				0595FA0A265FB7B5004AE40B /* BigGameCellViewModel.swift */,
 			);
-			path = GameCell;
+			path = BigGameCell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -358,6 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0530D80A265BD20800DC4382 /* LaunchScreen.storyboard in Resources */,
+				0595FA18265FE75E004AE40B /* SmallGameCell.xib in Resources */,
 				05CA565E265E4BF800E6D5B1 /* BigGameCell.xib in Resources */,
 				0530D807265BD20800DC4382 /* Assets.xcassets in Resources */,
 				05899763265D95EE00A98C15 /* CategoryViewCell.xib in Resources */,
@@ -395,12 +421,14 @@
 				0530D7FB265BD20700DC4382 /* AppDelegate.swift in Sources */,
 				05518A82265C363F00263465 /* GameListViewModel.swift in Sources */,
 				0530D7FD265BD20700DC4382 /* SceneDelegate.swift in Sources */,
+				0595FA17265FE75E004AE40B /* SmallGameCell.swift in Sources */,
 				0589975F265D945A00A98C15 /* Collection+Extension.swift in Sources */,
 				05518A7C265BEF8B00263465 /* Category.swift in Sources */,
 				05899762265D95EE00A98C15 /* CategoryViewCell.swift in Sources */,
 				05CA565D265E4BF800E6D5B1 /* BigGameCell.swift in Sources */,
 				0530D805265BD20700DC4382 /* GameApp.xcdatamodeld in Sources */,
 				05219D71265C42B9004812C3 /* NibView.swift in Sources */,
+				0595FA13265FDD8D004AE40B /* UICollectionView+Loading.swift in Sources */,
 				05518A6F265BD52100263465 /* EndpointItem.swift in Sources */,
 				05857B6C265D3DC100F74908 /* TabBarController.swift in Sources */,
 				05518A7A265BEE1200263465 /* Game.swift in Sources */,
