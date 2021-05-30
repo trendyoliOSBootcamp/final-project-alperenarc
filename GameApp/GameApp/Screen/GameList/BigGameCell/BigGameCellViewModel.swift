@@ -45,7 +45,6 @@ extension BigGameCellViewModel: BigGameCellViewModelProtocol {
 
     func load() {
         guard let name = gameResult?.name, let backgroundImage = gameResult?.backgroundImage, let metacritic = gameResult?.metacritic, let platforms = gameResult?.parentPlatforms else { return }
-
         delegate?.prepareGenreLabel(genres: gameResult?.genres)
         delegate?.prepareImage(urlString: backgroundImage)
         delegate?.prepareReleaseDate(release: gameResult?.released)

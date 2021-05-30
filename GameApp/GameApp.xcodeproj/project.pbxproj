@@ -34,6 +34,11 @@
 		0595FA13265FDD8D004AE40B /* UICollectionView+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595FA12265FDD8D004AE40B /* UICollectionView+Loading.swift */; };
 		0595FA17265FE75E004AE40B /* SmallGameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595FA15265FE75E004AE40B /* SmallGameCell.swift */; };
 		0595FA18265FE75E004AE40B /* SmallGameCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0595FA16265FE75E004AE40B /* SmallGameCell.xib */; };
+		05BB5E1C2660E4B700534CF4 /* WishListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB5E1B2660E4B700534CF4 /* WishListItem.swift */; };
+		05BB5E1E26610EBE00534CF4 /* UICollectionView+EmptyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB5E1D26610EBE00534CF4 /* UICollectionView+EmptyList.swift */; };
+		05BB5E2026613B6D00534CF4 /* WishListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB5E1F26613B6D00534CF4 /* WishListViewModel.swift */; };
+		05BB5E2226613F3D00534CF4 /* ShowAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB5E2126613F3D00534CF4 /* ShowAlert.swift */; };
+		05BB5E242661435200534CF4 /* SmallGameCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BB5E232661435200534CF4 /* SmallGameCellViewModel.swift */; };
 		05CA565D265E4BF800E6D5B1 /* BigGameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05CA565B265E4BF800E6D5B1 /* BigGameCell.swift */; };
 		05CA565E265E4BF800E6D5B1 /* BigGameCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 05CA565C265E4BF800E6D5B1 /* BigGameCell.xib */; };
 		05CA5661265E620F00E6D5B1 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 05CA5660265E620F00E6D5B1 /* SDWebImage */; };
@@ -89,6 +94,11 @@
 		0595FA12265FDD8D004AE40B /* UICollectionView+Loading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Loading.swift"; sourceTree = "<group>"; };
 		0595FA15265FE75E004AE40B /* SmallGameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallGameCell.swift; sourceTree = "<group>"; };
 		0595FA16265FE75E004AE40B /* SmallGameCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallGameCell.xib; sourceTree = "<group>"; };
+		05BB5E1B2660E4B700534CF4 /* WishListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishListItem.swift; sourceTree = "<group>"; };
+		05BB5E1D26610EBE00534CF4 /* UICollectionView+EmptyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+EmptyList.swift"; sourceTree = "<group>"; };
+		05BB5E1F26613B6D00534CF4 /* WishListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishListViewModel.swift; sourceTree = "<group>"; };
+		05BB5E2126613F3D00534CF4 /* ShowAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowAlert.swift; sourceTree = "<group>"; };
+		05BB5E232661435200534CF4 /* SmallGameCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallGameCellViewModel.swift; sourceTree = "<group>"; };
 		05CA565B265E4BF800E6D5B1 /* BigGameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigGameCell.swift; sourceTree = "<group>"; };
 		05CA565C265E4BF800E6D5B1 /* BigGameCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BigGameCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -212,6 +222,7 @@
 			children = (
 				05518A6E265BD52100263465 /* EndpointItem.swift */,
 				05219D70265C42B9004812C3 /* NibView.swift */,
+				05BB5E2126613F3D00534CF4 /* ShowAlert.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -223,6 +234,7 @@
 				05518A79265BEE1200263465 /* Game.swift */,
 				05518A7B265BEF8B00263465 /* Category.swift */,
 				05518A7D265BF04800263465 /* GameSearchResult.swift */,
+				05BB5E1B2660E4B700534CF4 /* WishListItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -231,6 +243,7 @@
 			isa = PBXGroup;
 			children = (
 				05857B6E265D424500F74908 /* WishListViewController.swift */,
+				05BB5E1F26613B6D00534CF4 /* WishListViewModel.swift */,
 			);
 			path = WishList;
 			sourceTree = "<group>";
@@ -240,6 +253,7 @@
 			children = (
 				0589975E265D945A00A98C15 /* Collection+Extension.swift */,
 				0595FA12265FDD8D004AE40B /* UICollectionView+Loading.swift */,
+				05BB5E1D26610EBE00534CF4 /* UICollectionView+EmptyList.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -249,6 +263,7 @@
 			children = (
 				0595FA15265FE75E004AE40B /* SmallGameCell.swift */,
 				0595FA16265FE75E004AE40B /* SmallGameCell.xib */,
+				05BB5E232661435200534CF4 /* SmallGameCellViewModel.swift */,
 			);
 			path = SmallGameCell;
 			sourceTree = "<group>";
@@ -414,12 +429,15 @@
 			files = (
 				05518A7E265BF04800263465 /* GameSearchResult.swift in Sources */,
 				05857B6F265D424500F74908 /* WishListViewController.swift in Sources */,
+				05BB5E2026613B6D00534CF4 /* WishListViewModel.swift in Sources */,
+				05BB5E1E26610EBE00534CF4 /* UICollectionView+EmptyList.swift in Sources */,
 				05518A74265BEAD400263465 /* keys.swift in Sources */,
 				0595FA0B265FB7B5004AE40B /* BigGameCellViewModel.swift in Sources */,
 				0530D7FF265BD20700DC4382 /* GameListViewController.swift in Sources */,
 				05518A72265BD59400263465 /* Games.swift in Sources */,
 				0530D7FB265BD20700DC4382 /* AppDelegate.swift in Sources */,
 				05518A82265C363F00263465 /* GameListViewModel.swift in Sources */,
+				05BB5E242661435200534CF4 /* SmallGameCellViewModel.swift in Sources */,
 				0530D7FD265BD20700DC4382 /* SceneDelegate.swift in Sources */,
 				0595FA17265FE75E004AE40B /* SmallGameCell.swift in Sources */,
 				0589975F265D945A00A98C15 /* Collection+Extension.swift in Sources */,
@@ -427,7 +445,9 @@
 				05899762265D95EE00A98C15 /* CategoryViewCell.swift in Sources */,
 				05CA565D265E4BF800E6D5B1 /* BigGameCell.swift in Sources */,
 				0530D805265BD20700DC4382 /* GameApp.xcdatamodeld in Sources */,
+				05BB5E1C2660E4B700534CF4 /* WishListItem.swift in Sources */,
 				05219D71265C42B9004812C3 /* NibView.swift in Sources */,
+				05BB5E2226613F3D00534CF4 /* ShowAlert.swift in Sources */,
 				0595FA13265FDD8D004AE40B /* UICollectionView+Loading.swift in Sources */,
 				05518A6F265BD52100263465 /* EndpointItem.swift in Sources */,
 				05857B6C265D3DC100F74908 /* TabBarController.swift in Sources */,

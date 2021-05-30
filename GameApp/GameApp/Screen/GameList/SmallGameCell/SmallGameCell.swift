@@ -17,37 +17,22 @@ extension SmallGameCell {
 }
 
 final class SmallGameCell: UICollectionViewCell {
-
     @IBOutlet private weak var gameImage: UIImageView!
     @IBOutlet private weak var gameName: UILabel!
     @IBOutlet private weak var wishListContainer: UIView!
     @IBOutlet weak var wishListButton: UIButton!
     @IBOutlet weak var nameContainer: UIView!
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        setupUI()
-    }
-
-    func configure(image: String?, name: String?, wishListStatus: Bool?) {
-        guard let image = image, let name = name else { return }
-        self.gameName.text = name
-        prepareImage(image: image)
-        prepareWishListButton(wishListStatus: wishListStatus)
-    }
-
-    func prepareWishListButton(wishListStatus: Bool?) {
-        guard let status = wishListStatus else { return }
-        if status {
-            wishListContainer.layer.backgroundColor = .init(srgbRed: 93/255, green: 197/255, blue: 52/255, alpha: 1)
-        } else {
-            wishListContainer.layer.backgroundColor = .init(srgbRed: 55/255, green: 55/255, blue: 55/255, alpha: 1)
+    var viewModel: SmallGameCellViewModelProtocol! {
+        didSet {
+            viewModel.delegate = self
+            viewModel.load()
         }
     }
 
-    func prepareImage(image: String) {
-        let photoURL = URL(string: image)
-        self.gameImage.sd_setImage(with: photoURL)
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        setupUI()
     }
 
     func setupUI() {
@@ -61,9 +46,26 @@ final class SmallGameCell: UICollectionViewCell {
         wishListContainer.layer.cornerRadius = Constants.wishListRadius
         gameImage.layer.cornerRadius = Constants.containerRadius
         gameImage.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-
         nameContainer.layer.cornerRadius = Constants.containerRadius
         nameContainer.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+    }
+}
 
+extension SmallGameCell: SmallGameCellViewModelDelegate {
+    func prepareWishListButton(wishListStatus: Bool) {
+        if wishListStatus {
+            wishListContainer.layer.backgroundColor = .init(srgbRed: 93 / 255, green: 197 / 255, blue: 52 / 255, alpha: 1)
+        } else {
+            wishListContainer.layer.backgroundColor = .init(srgbRed: 55 / 255, green: 55 / 255, blue: 55 / 255, alpha: 1)
+        }
+    }
+
+    func prepareImage(image: String) {
+        let photoURL = URL(string: image)
+        self.gameImage.sd_setImage(with: photoURL)
+    }
+
+    func prepareName(name: String) {
+        self.gameName.text = name
     }
 }

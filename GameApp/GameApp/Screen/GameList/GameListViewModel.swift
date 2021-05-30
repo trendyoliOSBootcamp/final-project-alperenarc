@@ -5,12 +5,14 @@
 //  Created by Alperen Arıcı on 24.05.2021.
 //
 
+import CoreData
 import CoreNetwork
 import Foundation
 
 extension GameListViewModel {
     enum Constants {
         static let firstPage = "1"
+        static let wishListEntityName = "WishList"
     }
 }
 
@@ -24,21 +26,27 @@ protocol GameListViewModelProtocol {
     func categoryPlatform(_ index: Int) -> CategoryPlatform?
     func gameResult(_ index: Int) -> GameResult?
     func setSelectedCategory(category: CategoryPlatform)
-    func getSelectedCategory() -> CategoryPlatform
+    func getSelectedCategory() -> CategoryPlatform?
     func willDisplay(_ index: Int)
     func changeCardType()
     func addOrRemoveWishList(id: Int)
     func wishListContains(id: Int?) -> Bool
-
+    func searchGame(searchText: String)
+    func searchCancel()
+    func getAllCategories() -> [CategoryPlatform]
 }
 
 protocol GameListViewModelDelegate: AnyObject {
     func setTabbarUI()
     func setSearchBarUI()
+    func setNavigationBarUI()
     func reloadCategoryList()
     func reloadGameList()
     func showLoadingView()
     func hideLoadingView()
+    func getAppDelegate() -> AppDelegate
+    func showEmptyCollectionView()
+    func restoreCollectionView()
 }
 
 final class GameListViewModel {
@@ -46,20 +54,25 @@ final class GameListViewModel {
     weak var delegate: GameListViewModelDelegate?
     private var categories: [CategoryPlatform] = []
     private var games: [GameResult] = []
-    private var selectedCategory: CategoryPlatform
+    private var selectedCategory: CategoryPlatform?
     private var nextPageNumber: String = Constants.firstPage
     private var shouldFetchNextPage: Bool = true
     private var isBigCardActive = true
-    private var wishList: [Int] = [3498]
+    private var wishListCoreData: [WishListItem] = []
+    lazy var appDelegate = delegate?.getAppDelegate()
+    lazy var context: NSManagedObjectContext = appDelegate!.persistentContainer.viewContext
 
     init(networkManager: NetworkManager<EndpointItem>) {
         self.networkManager = networkManager
-        selectedCategory = CategoryPlatform(id: nil)
     }
 
     private func fetchGames(page: String) {
+        var platformStr = ""
+        if let platform = selectedCategory?.id {
+            platformStr = "&parent_platforms=\(platform)"
+        }
         delegate?.showLoadingView()
-        networkManager.request(endpoint: .games(page: page), type: Games.self) { [weak self] result in
+        networkManager.request(endpoint: .games(page: page, platform: platformStr), type: Games.self) { [weak self] result in
             self?.delegate?.hideLoadingView()
             switch result {
             case .success(let response):
@@ -99,6 +112,50 @@ final class GameListViewModel {
         }
     }
 
+    private func fetchSearchGameResults(searchText: String, page: String) {
+        // Search kelimesini ara
+        // bulamazsan CollectionView'i boş göster
+        // bulursan listele ve next page i ekle
+        // pagination yapısı burada da olacak.
+        // reload Collection View
+
+        delegate?.showLoadingView()
+        var platformStr = ""
+        if let platform = selectedCategory?.id {
+            platformStr = "&parent_platforms=\(platform)"
+        }
+
+        networkManager.request(endpoint: .searchGame(searchText: searchText, page: page, platform: platformStr), type: Games.self) { [weak self] result in
+            self?.delegate?.hideLoadingView()
+            switch result {
+            case .success(let response):
+                if let gameList = response.results {
+                    if gameList.isEmpty {
+                        self?.delegate?.showEmptyCollectionView()
+                    } else {
+
+                        if self?.nextPageNumber == Constants.firstPage {
+                            self?.games = gameList
+                        } else {
+                            self?.games.append(contentsOf: gameList)
+                        }
+
+                        if let next = response.next {
+                            self?.calculateNextPageNumber(next: next)
+                        } else {
+                            self?.shouldFetchNextPage = false
+                        }
+                    }
+                    self?.delegate?.reloadGameList()
+                }
+            case .failure(let error):
+                print(error)
+                break
+            }
+        }
+
+    }
+
     private func calculateNextPageNumber(next: String) {
         let number = next.components(separatedBy: "&page=")
         if !number[1].isEmpty {
@@ -109,7 +166,42 @@ final class GameListViewModel {
     }
 
     private func fetchWishList() {
-        // MARK: CoreData' dan çekilecek.
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.wishListEntityName)
+        do {
+            let results: NSArray = try context.fetch(request) as NSArray
+            for result in results {
+                let wishListItem = result as! WishListItem
+                wishListCoreData.append(wishListItem)
+            }
+        } catch {
+            print("Fetch failed !")
+        }
+    }
+
+    private func addWishListToDB(id: Int) {
+        let entity = NSEntityDescription.entity(forEntityName: Constants.wishListEntityName, in: context)
+        let newWishListItem = WishListItem(entity: entity!, insertInto: context)
+        newWishListItem.id = id as NSNumber
+        do {
+            try context.save()
+            wishListCoreData.append(newWishListItem)
+        } catch {
+            print("Doesn't save !")
+        }
+    }
+
+    private func deleteWishListFromDB(id: Int) {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.wishListEntityName)
+        request.predicate = NSPredicate.init(format: "id==\(id)")
+        do {
+            let results: NSArray = try context.fetch(request) as NSArray
+            for object in results {
+                context.delete(object as! NSManagedObject)
+            }
+            try context.save()
+        } catch _ {
+            print("Doesn't delete !")
+        }
     }
 }
 
@@ -119,26 +211,34 @@ extension GameListViewModel: GameListViewModelProtocol {
     var numberOfGame: Int { games.count }
     var getGames: [GameResult] { games }
     func changeCardType() { isBigCardActive = !isBigCardActive }
-    func getSelectedCategory() -> CategoryPlatform { selectedCategory }
+    func getSelectedCategory() -> CategoryPlatform? { selectedCategory }
     func categoryPlatform(_ index: Int) -> CategoryPlatform? { categories[safe: index] }
     func gameResult(_ index: Int) -> GameResult? { games[safe: index] }
 
     func addOrRemoveWishList(id: Int) {
-        // if wishList contains this id remove it. else add to wishList
-        // MARK: CoreData' ya eklenip çıkartılacak.
+        let entity = NSEntityDescription.entity(forEntityName: Constants.wishListEntityName, in: context)
+        let wishListItem = WishListItem(entity: entity!, insertInto: context)
+        wishListItem.id = id as NSNumber
         if wishListContains(id: id) {
-            guard let index = wishList.firstIndex(of: id) else { return }
-            wishList.remove(at: index)
+            var index: Int = 0
+            for item in 0...wishListCoreData.count - 1 {
+                if wishListCoreData[safe: item] == id as NSNumber {
+                    index = item
+                    return
+                }
+            }
+            wishListCoreData.remove(at: index)
+            deleteWishListFromDB(id: id)
         } else {
-            wishList.append(id)
+            addWishListToDB(id: id)
+            wishListCoreData.append(wishListItem)
         }
-        print(wishList)
         delegate?.reloadGameList()
     }
 
     func wishListContains(id: Int?) -> Bool {
         guard let id = id else { return false }
-        return wishList.contains { $0 == id }
+        return wishListCoreData.contains { $0.id == id as NSNumber }
     }
 
     func willDisplay(_ index: Int) {
@@ -153,10 +253,31 @@ extension GameListViewModel: GameListViewModelProtocol {
         } else {
             selectedCategory = category
         }
+        games = []
+        nextPageNumber = Constants.firstPage
+        shouldFetchNextPage = true
+        fetchGames(page: nextPageNumber)
     }
+
+    func searchGame(searchText: String) {
+        // Search flow started
+        games = []
+        nextPageNumber = Constants.firstPage
+        shouldFetchNextPage = true
+        fetchSearchGameResults(searchText: searchText, page: nextPageNumber)
+    }
+
+    func searchCancel() {
+        games = []
+        nextPageNumber = Constants.firstPage
+        fetchGames(page: nextPageNumber)
+    }
+
+    func getAllCategories() -> [CategoryPlatform] { categories }
 
     func load() {
         delegate?.setTabbarUI()
+        delegate?.setNavigationBarUI()
         delegate?.setSearchBarUI()
         fetchCategories()
         fetchGames(page: nextPageNumber)

@@ -32,7 +32,8 @@ extension GameListViewController {
 }
 
 final class GameListViewController: UIViewController {
-    private var searchController = UISearchController(searchResultsController: nil)
+    private let searchController = UISearchController()
+
     @IBOutlet private weak var categoryCollectionView: UICollectionView!
     @IBOutlet weak var gamesCollectionView: UICollectionView!
     @IBOutlet weak var cardTypeButton: UIButton!
@@ -46,10 +47,19 @@ final class GameListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.load()
+        registerCells()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        reloadGameList()
+    }
+
+    func registerCells() {
         categoryCollectionView.register(UINib(nibName: Constants.Cell.categoryCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.categoryCell)
         gamesCollectionView.register(UINib(nibName: Constants.Cell.bigGameCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.bigGameCell)
         gamesCollectionView.register(UINib(nibName: Constants.Cell.smallGameCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.smallGameCell)
     }
+
     @IBAction func cardTypeAction() {
         viewModel.changeCardType()
         viewModel.cardType ?
@@ -72,11 +82,7 @@ extension GameListViewController: UICollectionViewDataSource {
 
             let currentCategoryPlatform = viewModel.categoryPlatform(indexPath.row)
             if let platformName = currentCategoryPlatform?.name {
-                if currentCategoryPlatform == viewModel.getSelectedCategory() {
-                    cell.configure(name: platformName, bgColor: Constants.categorySelectedColor, textColor: Constants.categoryUnselectedColor)
-                } else {
-                    cell.configure(name: platformName, bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
-                }
+                cell.configure(name: platformName, bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
             }
             return cell
         } else {
@@ -94,7 +100,7 @@ extension GameListViewController: UICollectionViewDataSource {
                 let cell = gamesCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.Cell.smallGameCell, for: indexPath) as! SmallGameCell
                 let currentGameResult = viewModel.gameResult(indexPath.row)
                 if let gameResult = currentGameResult {
-                    cell.configure(image: gameResult.backgroundImage, name: gameResult.name, wishListStatus: viewModel.wishListContains(id: gameResult.id))
+                    cell.viewModel = SmallGameCellViewModel(gameResult: gameResult, wishListStatus: viewModel.wishListContains(id: gameResult.id))
                     cell.wishListButton.tag = indexPath.row
                     cell.wishListButton.addTarget(self, action: #selector(addToWishList(_:)), for: .touchUpInside)
                 }
@@ -121,7 +127,7 @@ extension GameListViewController: UICollectionViewDelegateFlowLayout {
                 let imageSize = cellWidth * Constants.Cell.bigGameCellImageAspectRatio
                 return .init(width: cellWidth, height: Constants.Cell.descriptionHeight + imageSize)
             } else {
-                let cellWidth = (view.frame.width / 2) - (Constants.Cell.smallGameCellPadding + Constants.Cell.smallGameCellPadding)
+                let cellWidth = (gamesCollectionView.frame.size.width - (Constants.Cell.smallGameCellPadding + Constants.Cell.smallGameCellPadding + Constants.Cell.smallGameCellPadding)) / 2
                 let imageSize = cellWidth * Constants.Cell.smallGameCellImageAspectRatio
                 return .init(width: cellWidth, height: Constants.Cell.smallGameCellNameHeight + imageSize)
             }
@@ -132,6 +138,10 @@ extension GameListViewController: UICollectionViewDelegateFlowLayout {
         collectionView == categoryCollectionView ? Constants.Cell.categoryItemPadding : Constants.Cell.gameItemPadding
     }
 
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        Constants.Cell.smallGameCellPadding
+    }
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         if collectionView == categoryCollectionView {
             return .init(top: Constants.Cell.categoryCellPadding, left: Constants.Cell.categoryCellPadding, bottom: .zero, right: .zero)
@@ -139,7 +149,7 @@ extension GameListViewController: UICollectionViewDelegateFlowLayout {
             if viewModel.cardType {
                 return .init(top: .zero, left: Constants.Cell.bigGameCellPadding, bottom: .zero, right: Constants.Cell.bigGameCellPadding)
             } else {
-                return .init(top: .zero, left: Constants.Cell.bigGameCellPadding, bottom: .zero, right: Constants.Cell.bigGameCellPadding)
+                return .init(top: .zero, left: Constants.Cell.smallGameCellPadding, bottom: .zero, right: Constants.Cell.smallGameCellPadding)
             }
         }
     }
@@ -149,9 +159,29 @@ extension GameListViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDelegate
 extension GameListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+        let cell = categoryCollectionView.cellForItem(at: indexPath) as! CategoryViewCell
         guard let category = viewModel.categoryPlatform(indexPath.row) else { return }
         viewModel.setSelectedCategory(category: category)
-        reloadCategoryList()
+        let currentCategoryPlatform = viewModel.categoryPlatform(indexPath.row)
+
+        if let platformName = currentCategoryPlatform?.name {
+            if viewModel.getSelectedCategory() == currentCategoryPlatform {
+                cell.configure(name: platformName, bgColor: Constants.categorySelectedColor, textColor: Constants.categoryUnselectedColor)
+            } else {
+                cell.configure(name: platformName, bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
+
+            }
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if let selectedCategory = viewModel.getSelectedCategory(), let row = viewModel.getAllCategories().firstIndex(of: selectedCategory) {
+            let previousIndexPath = IndexPath(row: row, section: 0)
+            guard let previousCell = categoryCollectionView.cellForItem(at: previousIndexPath) as? CategoryViewCell else { return }
+            let previousCategory = viewModel.categoryPlatform(previousIndexPath.row)
+            previousCell.configure(name: previousCategory?.name ?? "", bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -161,6 +191,18 @@ extension GameListViewController: UICollectionViewDelegate {
 
 // MARK: - GameListViewModelDelegate
 extension GameListViewController: GameListViewModelDelegate {
+    func showEmptyCollectionView() {
+        gamesCollectionView.setEmptyMessage(message: "No game has been found !")
+    }
+
+    func restoreCollectionView() {
+        gamesCollectionView.restore()
+    }
+
+    func getAppDelegate() -> AppDelegate {
+        UIApplication.shared.delegate as! AppDelegate
+    }
+
     func showLoadingView() {
         gamesCollectionView.setLoading()
     }
@@ -177,6 +219,17 @@ extension GameListViewController: GameListViewModelDelegate {
         categoryCollectionView.reloadData()
     }
 
+    func setNavigationBarUI() {
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = UIColor(red: 29 / 255, green: 29 / 255, blue: 29 / 255, alpha: 0.94)
+        appearance.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.white]
+
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+
+    }
+
     func setTabbarUI() {
         tabBarController?.tabBar.tintColor = .white
         tabBarController?.tabBar.barTintColor = Constants.barTintColor
@@ -185,17 +238,23 @@ extension GameListViewController: GameListViewModelDelegate {
     }
 
     func setSearchBarUI() {
-        searchController.delegate = self
         searchController.hidesNavigationBarDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.tintColor = .white
+        searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
     }
 }
 
 // MARK: - UISearchControllerDelegate
-extension GameListViewController: UISearchBarDelegate, UISearchControllerDelegate {
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        print(searchText)
-//    }
+extension GameListViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let searchText = searchController.searchBar.text else { return }
+        viewModel.searchGame(searchText: searchText)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        viewModel.searchCancel()
+    }
 }
 

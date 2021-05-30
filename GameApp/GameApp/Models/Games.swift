@@ -59,24 +59,37 @@ struct YearYear: Codable {
 
 // MARK: - Result
 struct GameResult: Codable {
-    let id: Int?
-    let slug, name, released: String?
-    let tba: Bool?
-    let backgroundImage: String?
-    let rating: Double?
-    let ratingTop: Int?
-    let ratings: [Rating]?
-    let ratingsCount, reviewsTextCount, added: Int?
-    let addedByStatus: AddedByStatus?
-    let metacritic, playtime, suggestionsCount: Int?
-    let updated: String?
-    let reviewsCount: Int?
-    let saturatedColor, dominantColor: String?
-    let platforms: [PlatformElement]?
-    let parentPlatforms: [ParentPlatform]?
-    let genres: [GameGenre]?
-    let esrbRating: EsrbRating?
-    let shortScreenshots: [ShortScreenshot]?
+    var id: Int? = nil
+    var slug: String? = nil
+    var name: String? = nil
+    var released: String? = nil
+    var tba: Bool? = nil
+    var backgroundImage: String? = nil
+    var rating: Double? = nil
+    var ratingTop: Int? = nil
+    var ratings: [Rating]? = nil
+    var ratingsCount: Int? = nil
+    var reviewsTextCount: Int? = nil
+    var added: Int? = nil
+    var addedByStatus: AddedByStatus? = nil
+    var metacritic: Int? = nil
+    var playtime: Int? = nil
+    var suggestionsCount: Int? = nil
+    var updated: String? = nil
+    var reviewsCount: Int? = nil
+    var saturatedColor: String? = nil
+    var dominantColor: String? = nil
+    var platforms: [PlatformElement]? = nil
+    var parentPlatforms: [ParentPlatform]? = nil
+    var genres: [GameGenre]? = nil
+    var esrbRating: EsrbRating? = nil
+    var shortScreenshots: [ShortScreenshot]? = nil
+
+    init(id: Int, name: String, image: String) {
+        self.id = id
+        self.name = name
+        self.backgroundImage = image
+    }
 
     enum CodingKeys: String, CodingKey {
         case id, slug, name, released, tba
