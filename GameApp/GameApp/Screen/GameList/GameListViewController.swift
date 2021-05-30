@@ -28,6 +28,7 @@ extension GameListViewController {
             static let gameItemPadding: CGFloat = 16
             static let categoryItemPadding: CGFloat = 12
         }
+        static let detailViewSegueID = "GameDetailViewSegue"
     }
 }
 
@@ -49,24 +50,34 @@ final class GameListViewController: UIViewController {
         viewModel.load()
         registerCells()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         reloadGameList()
     }
 
-    func registerCells() {
+    private func registerCells() {
         categoryCollectionView.register(UINib(nibName: Constants.Cell.categoryCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.categoryCell)
         gamesCollectionView.register(UINib(nibName: Constants.Cell.bigGameCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.bigGameCell)
         gamesCollectionView.register(UINib(nibName: Constants.Cell.smallGameCell, bundle: nil), forCellWithReuseIdentifier: Constants.Cell.smallGameCell)
     }
 
-    @IBAction func cardTypeAction() {
+    @IBAction private func cardTypeAction() {
         viewModel.changeCardType()
         viewModel.cardType ?
         cardTypeButton.setImage(UIImage(named: "bigLayoutButton"), for: .normal):
             cardTypeButton.setImage(UIImage(named: "smallLayoutButton"), for: .normal)
         reloadGameList()
     }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case Constants.detailViewSegueID:
+            break
+        default:
+            break
+        }
+    }
+
 }
 
 // MARK: - UICollectionViewDataSource
@@ -159,28 +170,34 @@ extension GameListViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDelegate
 extension GameListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == categoryCollectionView {
+            let cell = categoryCollectionView.cellForItem(at: indexPath) as! CategoryViewCell
+            guard let category = viewModel.categoryPlatform(indexPath.row) else { return }
+            viewModel.setSelectedCategory(category: category)
+            let currentCategoryPlatform = viewModel.categoryPlatform(indexPath.row)
 
-        let cell = categoryCollectionView.cellForItem(at: indexPath) as! CategoryViewCell
-        guard let category = viewModel.categoryPlatform(indexPath.row) else { return }
-        viewModel.setSelectedCategory(category: category)
-        let currentCategoryPlatform = viewModel.categoryPlatform(indexPath.row)
+            if let platformName = currentCategoryPlatform?.name {
+                if viewModel.getSelectedCategory() == currentCategoryPlatform {
+                    cell.configure(name: platformName, bgColor: Constants.categorySelectedColor, textColor: Constants.categoryUnselectedColor)
+                } else {
+                    cell.configure(name: platformName, bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
 
-        if let platformName = currentCategoryPlatform?.name {
-            if viewModel.getSelectedCategory() == currentCategoryPlatform {
-                cell.configure(name: platformName, bgColor: Constants.categorySelectedColor, textColor: Constants.categoryUnselectedColor)
-            } else {
-                cell.configure(name: platformName, bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
-
+                }
             }
+        } else {
+            performSegue(withIdentifier: Constants.detailViewSegueID, sender: nil)
+
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if let selectedCategory = viewModel.getSelectedCategory(), let row = viewModel.getAllCategories().firstIndex(of: selectedCategory) {
-            let previousIndexPath = IndexPath(row: row, section: 0)
-            guard let previousCell = categoryCollectionView.cellForItem(at: previousIndexPath) as? CategoryViewCell else { return }
-            let previousCategory = viewModel.categoryPlatform(previousIndexPath.row)
-            previousCell.configure(name: previousCategory?.name ?? "", bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
+        if collectionView == categoryCollectionView {
+            if let selectedCategory = viewModel.getSelectedCategory(), let row = viewModel.getAllCategories().firstIndex(of: selectedCategory) {
+                let previousIndexPath = IndexPath(row: row, section: 0)
+                guard let previousCell = categoryCollectionView.cellForItem(at: previousIndexPath) as? CategoryViewCell else { return }
+                let previousCategory = viewModel.categoryPlatform(previousIndexPath.row)
+                previousCell.configure(name: previousCategory?.name ?? "", bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
+            }
         }
     }
 
