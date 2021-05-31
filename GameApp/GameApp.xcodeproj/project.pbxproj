@@ -30,6 +30,8 @@
 		0589975F265D945A00A98C15 /* Collection+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0589975E265D945A00A98C15 /* Collection+Extension.swift */; };
 		05899762265D95EE00A98C15 /* CategoryViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05899760265D95EE00A98C15 /* CategoryViewCell.swift */; };
 		05899763265D95EE00A98C15 /* CategoryViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 05899761265D95EE00A98C15 /* CategoryViewCell.xib */; };
+		059379E32664284A004B0122 /* GameDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059379E22664284A004B0122 /* GameDetailViewController.swift */; };
+		059379E52664285A004B0122 /* GameDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059379E42664285A004B0122 /* GameDetailViewModel.swift */; };
 		0595FA0B265FB7B5004AE40B /* BigGameCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595FA0A265FB7B5004AE40B /* BigGameCellViewModel.swift */; };
 		0595FA13265FDD8D004AE40B /* UICollectionView+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595FA12265FDD8D004AE40B /* UICollectionView+Loading.swift */; };
 		0595FA17265FE75E004AE40B /* SmallGameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0595FA15265FE75E004AE40B /* SmallGameCell.swift */; };
@@ -90,6 +92,8 @@
 		0589975E265D945A00A98C15 /* Collection+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extension.swift"; sourceTree = "<group>"; };
 		05899760265D95EE00A98C15 /* CategoryViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewCell.swift; sourceTree = "<group>"; };
 		05899761265D95EE00A98C15 /* CategoryViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryViewCell.xib; sourceTree = "<group>"; };
+		059379E22664284A004B0122 /* GameDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailViewController.swift; sourceTree = "<group>"; };
+		059379E42664285A004B0122 /* GameDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDetailViewModel.swift; sourceTree = "<group>"; };
 		0595FA0A265FB7B5004AE40B /* BigGameCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigGameCellViewModel.swift; sourceTree = "<group>"; };
 		0595FA12265FDD8D004AE40B /* UICollectionView+Loading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Loading.swift"; sourceTree = "<group>"; };
 		0595FA15265FE75E004AE40B /* SmallGameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallGameCell.swift; sourceTree = "<group>"; };
@@ -198,6 +202,7 @@
 		05518A75265BEC4400263465 /* Screen */ = {
 			isa = PBXGroup;
 			children = (
+				059379E126642815004B0122 /* GameDetail */,
 				05857B6D265D422C00F74908 /* WishList */,
 				05518A76265BEC8F00263465 /* GameList */,
 				05857B6B265D3DC100F74908 /* TabBarController.swift */,
@@ -246,6 +251,15 @@
 				05BB5E1F26613B6D00534CF4 /* WishListViewModel.swift */,
 			);
 			path = WishList;
+			sourceTree = "<group>";
+		};
+		059379E126642815004B0122 /* GameDetail */ = {
+			isa = PBXGroup;
+			children = (
+				059379E22664284A004B0122 /* GameDetailViewController.swift */,
+				059379E42664285A004B0122 /* GameDetailViewModel.swift */,
+			);
+			path = GameDetail;
 			sourceTree = "<group>";
 		};
 		0595FA11265FDD7A004AE40B /* Extensions */ = {
@@ -449,9 +463,11 @@
 				05219D71265C42B9004812C3 /* NibView.swift in Sources */,
 				05BB5E2226613F3D00534CF4 /* ShowAlert.swift in Sources */,
 				0595FA13265FDD8D004AE40B /* UICollectionView+Loading.swift in Sources */,
+				059379E52664285A004B0122 /* GameDetailViewModel.swift in Sources */,
 				05518A6F265BD52100263465 /* EndpointItem.swift in Sources */,
 				05857B6C265D3DC100F74908 /* TabBarController.swift in Sources */,
 				05518A7A265BEE1200263465 /* Game.swift in Sources */,
+				059379E32664284A004B0122 /* GameDetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
