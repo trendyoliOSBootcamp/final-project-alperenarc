@@ -9,7 +9,7 @@ import CoreNetwork
 
 enum EndpointItem: Endpoint {
     case games(page: String, platform: String?)
-    case game(id: String)
+    case game(id: Int)
     case searchGame(searchText: String, page: String, platform: String?)
     case categories
 

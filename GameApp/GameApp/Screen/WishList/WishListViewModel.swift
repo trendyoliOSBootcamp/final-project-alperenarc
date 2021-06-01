@@ -47,7 +47,7 @@ final class WishListViewModel {
     }
 
     private func fetchGame(id: NSNumber, completion: @escaping () -> ()) {
-        networkManager.request(endpoint: .game(id: "\(id)"), type: Game.self) { [weak self] result in
+        networkManager.request(endpoint: .game(id: Int(id)), type: Game.self) { [weak self] result in
             switch result {
             case .success(let response):
                 let gameResult = GameResult(id: response.id ?? 0,
@@ -144,7 +144,7 @@ extension WishListViewModel: WishListViewModelProtocol {
         wishGames = wishGames.filter { $0.id != id }
         if wishGames.isEmpty {
             delegate?.showEmptyCollectionView()
-        }else{
+        } else {
             delegate?.restoreCollectionView()
         }
         delegate?.reloadData()

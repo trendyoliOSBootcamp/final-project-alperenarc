@@ -94,13 +94,7 @@ extension BigGameCell: BigGameCellViewModelDelegate {
 
     func prepareReleaseDate(release: String?) {
         if let release = release {
-            let dateFormatterGet = DateFormatter()
-            dateFormatterGet.dateFormat = "yyyy-MM-dd"
-            let dateFormatterPrint = DateFormatter()
-            dateFormatterPrint.dateFormat = "MMM d, yyyy"
-            if let date = dateFormatterGet.date(from: release) {
-                self.releaseDate.text = dateFormatterPrint.string(from: date)
-            }
+            self.releaseDate.text = release.dateFormatMMMdyy()
             self.releaseDateView.isHidden = false
         } else {
 

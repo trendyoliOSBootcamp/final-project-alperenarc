@@ -22,6 +22,7 @@ protocol GameListViewModelProtocol {
     var numberOfGame: Int { get }
     var cardType: Bool { get }
     var getGames: [GameResult] { get }
+    var game: Game? { get set }
     func load()
     func categoryPlatform(_ index: Int) -> CategoryPlatform?
     func gameResult(_ index: Int) -> GameResult?
@@ -59,6 +60,7 @@ final class GameListViewModel {
     private var shouldFetchNextPage: Bool = true
     private var isBigCardActive = true
     private var wishListCoreData: [WishListItem] = []
+    private var _game: Game?
     lazy var appDelegate = delegate?.getAppDelegate()
     lazy var context: NSManagedObjectContext = appDelegate!.persistentContainer.viewContext
 
@@ -203,9 +205,17 @@ final class GameListViewModel {
             print("Doesn't delete !")
         }
     }
+
 }
 
 extension GameListViewModel: GameListViewModelProtocol {
+    var game: Game? {
+        get { _game }
+        set(newValue) {
+            _game = newValue
+        }
+    }
+
     var cardType: Bool { isBigCardActive }
     var numberOfCategory: Int { categories.count }
     var numberOfGame: Int { games.count }

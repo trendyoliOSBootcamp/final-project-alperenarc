@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreNetwork
 
 extension GameListViewController {
     enum Constants {
@@ -33,12 +34,11 @@ extension GameListViewController {
 }
 
 final class GameListViewController: UIViewController {
-    private let searchController = UISearchController()
-
     @IBOutlet private weak var categoryCollectionView: UICollectionView!
-    @IBOutlet weak var gamesCollectionView: UICollectionView!
-    @IBOutlet weak var cardTypeButton: UIButton!
+    @IBOutlet private weak var gamesCollectionView: UICollectionView!
+    @IBOutlet private weak var cardTypeButton: UIButton!
 
+    private let searchController = UISearchController()
     var viewModel: GameListViewModelProtocol! {
         didSet {
             viewModel.delegate = self
@@ -49,10 +49,6 @@ final class GameListViewController: UIViewController {
         super.viewDidLoad()
         viewModel.load()
         registerCells()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        reloadGameList()
     }
 
     private func registerCells() {
@@ -70,14 +66,22 @@ final class GameListViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        switch segue.identifier {
-        case Constants.detailViewSegueID:
+        switch segue.destination {
+        case let vc as GameDetailViewController:
+            let vm = GameDetailViewModel(networkManager: NetworkManager()) // TODO
+            vm.gameDetailDelegate = self
+            vm.gameId = sender as? Int
+//            viewModel.fecthSingleGame(id: sender as! Int) { [weak self] in
+//
+//            }
+            let gameModel = viewModel.game
+            vm.game = gameModel
+            vc.viewModel = vm
             break
         default:
             break
         }
     }
-
 }
 
 // MARK: - UICollectionViewDataSource
@@ -170,6 +174,7 @@ extension GameListViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - UICollectionViewDelegate
 extension GameListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
         if collectionView == categoryCollectionView {
             let cell = categoryCollectionView.cellForItem(at: indexPath) as! CategoryViewCell
             guard let category = viewModel.categoryPlatform(indexPath.row) else { return }
@@ -185,8 +190,8 @@ extension GameListViewController: UICollectionViewDelegate {
                 }
             }
         } else {
-            performSegue(withIdentifier: Constants.detailViewSegueID, sender: nil)
-
+            let gameId = viewModel.gameResult(indexPath.row)?.id
+            performSegue(withIdentifier: Constants.detailViewSegueID, sender: gameId)
         }
     }
 
@@ -241,10 +246,8 @@ extension GameListViewController: GameListViewModelDelegate {
         appearance.backgroundColor = UIColor(red: 29 / 255, green: 29 / 255, blue: 29 / 255, alpha: 0.94)
         appearance.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: UIColor.white]
-
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
-
     }
 
     func setTabbarUI() {
@@ -275,3 +278,9 @@ extension GameListViewController: UISearchBarDelegate {
     }
 }
 
+extension GameListViewController: GameDetailDelegate {
+    func addOrRemoveWishListFromDetail(id: Int) {
+//        viewModel.addOrRemoveWishList(id: id)
+        //MARK TODO
+    }
+}
