@@ -46,7 +46,7 @@ protocol GameListViewModelProtocol {
 protocol GameListViewModelDelegate: AnyObject {
     func setTabbarUI()
     func setSearchBarUI()
-    func setNavigationBarUI()
+    
     func reloadCategoryList()
     func reloadGameList()
     func showLoadingView()
@@ -330,7 +330,7 @@ extension GameListViewModel: GameListViewModelProtocol {
 
     func load() {
         delegate?.setTabbarUI()
-        delegate?.setNavigationBarUI()
+        
         delegate?.setSearchBarUI()
         fetchCategories()
         fetchGames(page: nextPageNumber)

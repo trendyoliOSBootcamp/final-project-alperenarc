@@ -37,8 +37,8 @@ final class GameListViewController: UIViewController {
     @IBOutlet private weak var categoryCollectionView: UICollectionView!
     @IBOutlet private weak var gamesCollectionView: UICollectionView!
     @IBOutlet private weak var cardTypeButton: UIButton!
-
     private let searchController = UISearchController()
+    
     var viewModel: GameListViewModelProtocol! {
         didSet {
             viewModel.delegate = self
@@ -49,6 +49,11 @@ final class GameListViewController: UIViewController {
         super.viewDidLoad()
         viewModel.load()
         registerCells()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reloadGameList()
     }
 
     private func registerCells() {
@@ -113,7 +118,7 @@ extension GameListViewController: UICollectionViewDataSource {
                 let cell = gamesCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.Cell.smallGameCell, for: indexPath) as! SmallGameCell
                 let currentGameResult = viewModel.gameResult(indexPath.row)
                 if let gameResult = currentGameResult {
-                    cell.viewModel = SmallGameCellViewModel(gameResult: gameResult, wishListStatus: viewModel.wishListContains(id: gameResult.id),clickedStatus: viewModel.clickedGameListContains(id: gameResult.id))
+                    cell.viewModel = SmallGameCellViewModel(gameResult: gameResult, wishListStatus: viewModel.wishListContains(id: gameResult.id), clickedStatus: viewModel.clickedGameListContains(id: gameResult.id))
                     cell.wishListButton.tag = indexPath.row
                     cell.wishListButton.addTarget(self, action: #selector(addToWishList(_:)), for: .touchUpInside)
                 }
@@ -187,7 +192,6 @@ extension GameListViewController: UICollectionViewDelegate {
                 }
             }
         } else {
-            print(viewModel.cardType)
             if viewModel.cardType {
                 let cell = gamesCollectionView.cellForItem(at: indexPath) as! BigGameCell
                 cell.changeNameColor()
@@ -248,15 +252,6 @@ extension GameListViewController: GameListViewModelDelegate {
         categoryCollectionView.reloadData()
     }
 
-    func setNavigationBarUI() {
-        let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = UIColor(red: 29 / 255, green: 29 / 255, blue: 29 / 255, alpha: 0.94)
-        appearance.titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: UIColor.white]
-        navigationItem.standardAppearance = appearance
-        navigationItem.scrollEdgeAppearance = appearance
-    }
-
     func setTabbarUI() {
         tabBarController?.tabBar.tintColor = .white
         tabBarController?.tabBar.barTintColor = Constants.barTintColor
@@ -270,6 +265,8 @@ extension GameListViewController: GameListViewModelDelegate {
         searchController.searchBar.tintColor = .white
         searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+
     }
 }
 

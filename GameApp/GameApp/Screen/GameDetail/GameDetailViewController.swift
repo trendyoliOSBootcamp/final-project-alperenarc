@@ -82,6 +82,8 @@ final class GameDetailViewController: UIViewController, LoadingShowable {
     @IBOutlet private weak var wishButton: UIButton!
 
     private var isDescriptionExpand = true
+    private var redditLink: String?
+    private var websiteLink: String?
 
     var viewModel: GameDetailViewModelProtocol! {
         didSet {
@@ -100,26 +102,39 @@ final class GameDetailViewController: UIViewController, LoadingShowable {
     @objc private func expandDescription() {
         expandDescriptionView()
     }
+
     @IBAction func wishListButtonAction() {
         guard let id = viewModel.game?.id else { return }
         viewModel.addOrRemoveWishList(id: id)
+    }
+
+    @objc private func openRedditUrl() {
+        if let url = URL(string: redditLink ?? "") {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    @objc private func openWebsiteUrl() {
+        if let url = URL(string: websiteLink ?? "") {
+            UIApplication.shared.open(url)
+        }
     }
 }
 
 // MARK: - GameDetailViewModelDelegate
 extension GameDetailViewController: GameDetailViewModelDelegate {
-    
-    func changeWishButtonStatus(){
+
+    func changeWishButtonStatus() {
         wishButton.tintColor = viewModel.wishStatus ? UIColor(red: 93 / 255, green: 197 / 255, blue: 52 / 255, alpha: 1):
-        UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            UIColor(red: 1, green: 1, blue: 1, alpha: 1)
     }
-    
-    func setWishButtonUI(){
+
+    func setWishButtonUI() {
         let wishImage = UIImage(named: "gift")
         let tintedImage = wishImage?.withRenderingMode(.alwaysTemplate)
         wishButton.setImage(tintedImage, for: .normal)
         wishButton.tintColor = viewModel.wishStatus ? UIColor(red: 93 / 255, green: 197 / 255, blue: 52 / 255, alpha: 1):
-        UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            UIColor(red: 1, green: 1, blue: 1, alpha: 1)
     }
 
     func loadingShow() {
@@ -199,10 +214,17 @@ extension GameDetailViewController: GameDetailViewModelDelegate {
         // TODO
         if let redditUrl = reddit {
             visitRedditContainer.isHidden = false
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.openRedditUrl))
+            visitRedditContainer.addGestureRecognizer(tap)
+            redditLink = redditUrl
         } else { visitRedditContainer.isHidden = true }
 
         if let website = website {
             visitWebsiteContainer.isHidden = false
+            let tap = UITapGestureRecognizer(target: self, action: #selector(self.openWebsiteUrl))
+            visitWebsiteContainer.addGestureRecognizer(tap)
+            websiteLink = website
+
         } else { visitWebsiteContainer.isHidden = true }
 
     }
