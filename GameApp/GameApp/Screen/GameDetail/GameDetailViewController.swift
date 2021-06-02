@@ -58,7 +58,7 @@ private extension UIStackView {
     }
 }
 
-final class GameDetailViewController: UIViewController {
+final class GameDetailViewController: UIViewController, LoadingShowable {
     @IBOutlet private weak var descriptionView: UIView!
     @IBOutlet private weak var descriptionTextView: UITextView!
     @IBOutlet private weak var descriptionViewHeight: NSLayoutConstraint!
@@ -79,6 +79,7 @@ final class GameDetailViewController: UIViewController {
     @IBOutlet private weak var genresLabel: UILabel!
     @IBOutlet private weak var playTimeLabel: UILabel!
     @IBOutlet private weak var publishersLabel: UILabel!
+    @IBOutlet private weak var wishButton: UIButton!
 
     private var isDescriptionExpand = true
 
@@ -107,6 +108,28 @@ final class GameDetailViewController: UIViewController {
 
 // MARK: - GameDetailViewModelDelegate
 extension GameDetailViewController: GameDetailViewModelDelegate {
+    
+    func changeWishButtonStatus(){
+        wishButton.tintColor = viewModel.wishStatus ? UIColor(red: 93 / 255, green: 197 / 255, blue: 52 / 255, alpha: 1):
+        UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+    }
+    
+    func setWishButtonUI(){
+        let wishImage = UIImage(named: "gift")
+        let tintedImage = wishImage?.withRenderingMode(.alwaysTemplate)
+        wishButton.setImage(tintedImage, for: .normal)
+        wishButton.tintColor = viewModel.wishStatus ? UIColor(red: 93 / 255, green: 197 / 255, blue: 52 / 255, alpha: 1):
+        UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+    }
+
+    func loadingShow() {
+        showLoading()
+    }
+
+    func loadingHide() {
+        hideLoading()
+    }
+
     func setImage(image: String) {
         let imageUrl = URL(string: image)
         bannerImageView.sd_setImage(with: imageUrl, completed: nil)

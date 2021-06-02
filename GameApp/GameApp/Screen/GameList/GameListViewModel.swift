@@ -13,6 +13,7 @@ extension GameListViewModel {
     enum Constants {
         static let firstPage = "1"
         static let wishListEntityName = "WishList"
+        static let clickedGameEntityName = "ClickedGame"
     }
 }
 
@@ -23,6 +24,7 @@ protocol GameListViewModelProtocol {
     var cardType: Bool { get }
     var getGames: [GameResult] { get }
     var game: Game? { get set }
+    var clickedGameList: [ClickedGameItem] { get set }
     func load()
     func categoryPlatform(_ index: Int) -> CategoryPlatform?
     func gameResult(_ index: Int) -> GameResult?
@@ -32,9 +34,13 @@ protocol GameListViewModelProtocol {
     func changeCardType()
     func addOrRemoveWishList(id: Int)
     func wishListContains(id: Int?) -> Bool
+    func clickedGameListContains(id: Int?) -> Bool
     func searchGame(searchText: String)
     func searchCancel()
     func getAllCategories() -> [CategoryPlatform]
+    func addClickedGames(id: Int)
+    func fetchClickedGames()
+
 }
 
 protocol GameListViewModelDelegate: AnyObject {
@@ -61,6 +67,7 @@ final class GameListViewModel {
     private var isBigCardActive = true
     private var wishListCoreData: [WishListItem] = []
     private var _game: Game?
+    private var clickedGames: [ClickedGameItem] = []
     lazy var appDelegate = delegate?.getAppDelegate()
     lazy var context: NSManagedObjectContext = appDelegate!.persistentContainer.viewContext
 
@@ -155,7 +162,6 @@ final class GameListViewModel {
                 break
             }
         }
-
     }
 
     private func calculateNextPageNumber(next: String) {
@@ -209,6 +215,16 @@ final class GameListViewModel {
 }
 
 extension GameListViewModel: GameListViewModelProtocol {
+    func clickedGameListContains(id: Int?) -> Bool {
+        guard let id = id else { return false }
+        return clickedGameList.contains { $0.id == id as NSNumber }
+    }
+
+    var clickedGameList: [ClickedGameItem] {
+        get { clickedGames }
+        set { clickedGames = newValue }
+    }
+
     var game: Game? {
         get { _game }
         set(newValue) {
@@ -285,12 +301,40 @@ extension GameListViewModel: GameListViewModelProtocol {
 
     func getAllCategories() -> [CategoryPlatform] { categories }
 
+    func addClickedGames(id: Int) {
+        let entity = NSEntityDescription.entity(forEntityName: Constants.clickedGameEntityName, in: context)
+        let newClickedItem = ClickedGameItem(entity: entity!, insertInto: context)
+        newClickedItem.id = id as NSNumber
+        if !clickedGames.contains(newClickedItem) {
+            do {
+                try context.save()
+                clickedGames.append(newClickedItem)
+            } catch {
+                print("Doesn't save !")
+            }
+        }
+    }
+
+    func fetchClickedGames() {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.clickedGameEntityName)
+        do {
+            let results: NSArray = try context.fetch(request) as NSArray
+            for result in results {
+                let clickedGame = result as! ClickedGameItem
+                clickedGameList.append(clickedGame)
+            }
+        } catch {
+            print("Fetch failed !")
+        }
+    }
+
     func load() {
         delegate?.setTabbarUI()
         delegate?.setNavigationBarUI()
         delegate?.setSearchBarUI()
         fetchCategories()
         fetchGames(page: nextPageNumber)
+        fetchClickedGames()
         fetchWishList()
     }
 }

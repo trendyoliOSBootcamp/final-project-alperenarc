@@ -18,7 +18,8 @@ protocol SmallGameCellViewModelProtocol {
 protocol SmallGameCellViewModelDelegate: AnyObject {
     func prepareWishListButton(wishListStatus: Bool)
     func prepareImage(image: String)
-    func prepareName(name: String)
+    func prepareName(name: String, isClicked: Bool)
+    func changeNameColor()
 }
 
 // MARK: - SmallGameCellViewModel
@@ -26,10 +27,11 @@ final class SmallGameCellViewModel {
     weak var delegate: SmallGameCellViewModelDelegate?
     private let gameResult: GameResult?
     private var wishListStatus: Bool = false
-
-    init(gameResult: GameResult?, wishListStatus: Bool) {
+    private var clickedStatus: Bool = false
+    init(gameResult: GameResult?, wishListStatus: Bool, clickedStatus: Bool) {
         self.gameResult = gameResult
         self.wishListStatus = wishListStatus
+        self.clickedStatus = clickedStatus
     }
 }
 
@@ -38,7 +40,7 @@ extension SmallGameCellViewModel: SmallGameCellViewModelProtocol {
     var getWishListStatus: Bool { self.wishListStatus }
     func load() {
         guard let image = gameResult?.backgroundImage, let name = gameResult?.name else { return }
-        delegate?.prepareName(name: name)
+        delegate?.prepareName(name: name, isClicked: clickedStatus)
         delegate?.prepareImage(image: image)
         delegate?.prepareWishListButton(wishListStatus: wishListStatus)
     }

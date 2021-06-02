@@ -12,6 +12,7 @@ import CoreNetwork
 extension WishListViewModel {
     enum Constants {
         static let wishListEntityName = "WishList"
+        static let clickedGameEntityName = "ClickedGame"
     }
 }
 
@@ -22,6 +23,8 @@ protocol WishListViewModelProtocol {
     func load()
     func wishListContains(id: Int?) -> Bool
     func removeWishList(id: Int)
+    func fetchClickedGames()
+    func clickedGameListContains(id: Int?) -> Bool
 }
 
 protocol WishListViewModelDelegate: AnyObject {
@@ -41,6 +44,7 @@ final class WishListViewModel {
     lazy var context: NSManagedObjectContext = appDelegate!.persistentContainer.viewContext
     private var wishListCoreData: [WishListItem] = []
     private var wishGames: [GameResult] = []
+    private var clickedGameList: [ClickedGameItem] = []
 
     init(networkManager: NetworkManager<EndpointItem>) {
         self.networkManager = networkManager
@@ -123,6 +127,7 @@ extension WishListViewModel: WishListViewModelProtocol {
     func load() {
         wishListCoreData = []
         wishGames = []
+        fetchClickedGames()
         delegate?.showLoadingView()
         fetchWishList { [weak self] in
             self?.prepareWisList {
@@ -131,6 +136,24 @@ extension WishListViewModel: WishListViewModelProtocol {
             }
         }
     }
+    func fetchClickedGames() {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: Constants.clickedGameEntityName)
+        do {
+            let results: NSArray = try context.fetch(request) as NSArray
+            for result in results {
+                let clickedGame = result as! ClickedGameItem
+                clickedGameList.append(clickedGame)
+            }
+        } catch {
+            print("Fetch failed !")
+        }
+    }
+
+    func clickedGameListContains(id: Int?) -> Bool {
+        guard let id = id else { return false }
+        return clickedGameList.contains { $0.id == id as NSNumber }
+    }
+
     var wishList: [GameResult] { wishGames }
     func currentGame(at index: Int) -> GameResult { wishGames[index] }
 

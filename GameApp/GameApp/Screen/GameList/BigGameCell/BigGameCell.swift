@@ -79,8 +79,13 @@ final class BigGameCell: UICollectionViewCell {
 
 // MARK: - BigGameCellViewModelDelegate
 extension BigGameCell: BigGameCellViewModelDelegate {
-    func prepareNameLabel(name: String) {
+    func prepareNameLabel(name: String, isClicked: Bool) {
         self.name.text = name
+        if isClicked {
+            self.name.textColor = UIColor(red: 118 / 255, green: 118 / 255, blue: 118 / 255, alpha: 1)
+        } else {
+            self.name.textColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 1)
+        }
     }
 
     func preparePlayTime(playTime: Int?) {
@@ -179,9 +184,13 @@ extension BigGameCell: BigGameCellViewModelDelegate {
     func prepareWishListButton(wishListStatus: Bool?) {
         guard let status = wishListStatus else { return }
         if status {
-            wishListView.layer.backgroundColor = .init(srgbRed: 93/255, green: 197/255, blue: 52/255, alpha: 1)
+            wishListView.layer.backgroundColor = .init(srgbRed: 93 / 255, green: 197 / 255, blue: 52 / 255, alpha: 1)
         } else {
-            wishListView.layer.backgroundColor = .init(srgbRed: 55/255, green: 55/255, blue: 55/255, alpha: 1)
+            wishListView.layer.backgroundColor = .init(srgbRed: 55 / 255, green: 55 / 255, blue: 55 / 255, alpha: 1)
         }
+    }
+
+    func changeNameColor() {
+        name.textColor = UIColor(red: 118 / 255, green: 118 / 255, blue: 118 / 255, alpha: 1)
     }
 }

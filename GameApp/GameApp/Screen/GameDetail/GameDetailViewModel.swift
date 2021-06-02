@@ -15,6 +15,7 @@ protocol GameDetailViewModelProtocol {
     func addOrRemoveWishList(id: Int)
     func fecthSingleGame(completion: @escaping () -> ())
     func setPageDatas()
+    var wishStatus: Bool { get set }
 }
 
 protocol GameDetailViewModelDelegate: AnyObject {
@@ -22,6 +23,8 @@ protocol GameDetailViewModelDelegate: AnyObject {
     func setLinksUI()
     func setInformationViewUI()
     func setDescriptionViewUI()
+    func setWishButtonUI()
+    func changeWishButtonStatus()
     func expandDescriptionView()
     func setImage(image: String)
     func setName(name: String)
@@ -29,13 +32,16 @@ protocol GameDetailViewModelDelegate: AnyObject {
     func setDescription(description: String)
     func setInformation(releaseDate: String?, genres: [Developer]?, playtime: Int?, publishers: [Developer]?)
     func setUrls(reddit: String?, website: String?)
+    func loadingShow()
+    func loadingHide()
 }
 
 final class GameDetailViewModel {
-    let networkManager: NetworkManager<EndpointItem>
+    private let networkManager: NetworkManager<EndpointItem>
     weak var delegate: GameDetailViewModelDelegate?
     weak var gameDetailDelegate: GameDetailDelegate?
-    var gameId: Int?
+    var gameId: Int? // TODO
+    var isOnWishList: Bool = false // TODO
     private var _game: Game?
 
     init(networkManager: NetworkManager<EndpointItem>) {
@@ -44,16 +50,23 @@ final class GameDetailViewModel {
 }
 
 extension GameDetailViewModel: GameDetailViewModelProtocol {
+    var wishStatus: Bool {
+        get { isOnWishList }
+        set { isOnWishList = newValue }
+    }
+
     func fecthSingleGame(completion: @escaping () -> ()) {
+        delegate?.loadingShow()
         networkManager.request(endpoint: .game(id: gameId ?? 0), type: Game.self) { [weak self] result in
+            self?.delegate?.loadingHide()
             switch result {
             case .success(let response):
                 self?.game = response
-                completion()
             case .failure(let error):
                 print(error)
                 break
             }
+            completion()
         }
     }
 
@@ -68,14 +81,14 @@ extension GameDetailViewModel: GameDetailViewModelProtocol {
         delegate?.setLinksUI()
         delegate?.setMetacriticUI()
     }
-    
+
     func addOrRemoveWishList(id: Int) {
         addOrRemoveWishListFromDetail(id: id)
     }
-    
-    func setPageDatas(){
+
+    func setPageDatas() {
         guard let game = _game,
-              let description = game.descriptionRaw,
+            let description = game.descriptionRaw,
             let image = game.backgroundImage,
             let name = game.name,
             let metacritic = game.metacritic
@@ -87,11 +100,14 @@ extension GameDetailViewModel: GameDetailViewModelProtocol {
         delegate?.setDescription(description: description)
         delegate?.setInformation(releaseDate: game.released, genres: game.genres, playtime: game.playtime, publishers: game.publishers)
         delegate?.setUrls(reddit: game.redditURL, website: game.website)
+        delegate?.setWishButtonUI()
     }
 }
 
 extension GameDetailViewModel: GameDetailDelegate {
     func addOrRemoveWishListFromDetail(id: Int) {
+        isOnWishList = !isOnWishList
         gameDetailDelegate?.addOrRemoveWishListFromDetail(id: id)
+        delegate?.changeWishButtonStatus()
     }
 }

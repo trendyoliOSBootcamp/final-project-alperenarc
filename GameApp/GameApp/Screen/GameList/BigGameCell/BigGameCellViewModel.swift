@@ -16,7 +16,7 @@ protocol BigGameCellViewModelProtocol {
 
 // MARK: - BigGameCellViewModelDelegate
 protocol BigGameCellViewModelDelegate: AnyObject {
-    func prepareNameLabel(name: String)
+    func prepareNameLabel(name: String, isClicked: Bool)
     func preparePlayTime(playTime: Int?)
     func prepareReleaseDate(release: String?)
     func prepareGenreLabel(genres: [GameGenre]?)
@@ -25,6 +25,7 @@ protocol BigGameCellViewModelDelegate: AnyObject {
     func prepareMetacriticLabel(metacritic: Int)
     func prepareImage(urlString: String?)
     func prepareWishListButton(wishListStatus: Bool?)
+    func changeNameColor()
 }
 
 // MARK: - BigGameCellViewModel
@@ -32,10 +33,11 @@ final class BigGameCellViewModel {
     weak var delegate: BigGameCellViewModelDelegate?
     private let gameResult: GameResult?
     private var wishListStatus: Bool = false
-
-    init(gameResult: GameResult?, wishListStatus: Bool) {
+    private var clickedStatus: Bool = false
+    init(gameResult: GameResult?, wishListStatus: Bool, clickedStatus: Bool) {
         self.gameResult = gameResult
         self.wishListStatus = wishListStatus
+        self.clickedStatus = clickedStatus
     }
 }
 
@@ -51,7 +53,7 @@ extension BigGameCellViewModel: BigGameCellViewModelProtocol {
         delegate?.prepareMetacriticLabel(metacritic: metacritic)
         delegate?.prepareBadges(platforms: platforms)
         delegate?.preparePlayTime(playTime: gameResult?.playtime)
-        delegate?.prepareNameLabel(name: name)
+        delegate?.prepareNameLabel(name: name, isClicked: clickedStatus)
         delegate?.prepareWishListButton(wishListStatus: wishListStatus)
     }
 

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import CoreNetwork
+import CoreNetwork // TODO
 
 extension GameListViewController {
     enum Constants {
@@ -69,12 +69,10 @@ final class GameListViewController: UIViewController {
         switch segue.destination {
         case let vc as GameDetailViewController:
             let vm = GameDetailViewModel(networkManager: NetworkManager()) // TODO
+            let gameModel = viewModel.game
             vm.gameDetailDelegate = self
             vm.gameId = sender as? Int
-//            viewModel.fecthSingleGame(id: sender as! Int) { [weak self] in
-//
-//            }
-            let gameModel = viewModel.game
+            vm.isOnWishList = viewModel.wishListContains(id: sender as? Int)
             vm.game = gameModel
             vc.viewModel = vm
             break
@@ -105,7 +103,7 @@ extension GameListViewController: UICollectionViewDataSource {
                 let cell = gamesCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.Cell.bigGameCell, for: indexPath) as! BigGameCell
                 let currentGameResult = viewModel.gameResult(indexPath.row)
                 if let gameResult = currentGameResult {
-                    cell.viewModel = BigGameCellViewModel(gameResult: gameResult, wishListStatus: viewModel.wishListContains(id: gameResult.id))
+                    cell.viewModel = BigGameCellViewModel(gameResult: gameResult, wishListStatus: viewModel.wishListContains(id: gameResult.id), clickedStatus: viewModel.clickedGameListContains(id: gameResult.id))
                     cell.wishListButton.tag = indexPath.row
                     cell.wishListButton.addTarget(self, action: #selector(addToWishList(_:)), for: .touchUpInside)
                 }
@@ -115,7 +113,7 @@ extension GameListViewController: UICollectionViewDataSource {
                 let cell = gamesCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.Cell.smallGameCell, for: indexPath) as! SmallGameCell
                 let currentGameResult = viewModel.gameResult(indexPath.row)
                 if let gameResult = currentGameResult {
-                    cell.viewModel = SmallGameCellViewModel(gameResult: gameResult, wishListStatus: viewModel.wishListContains(id: gameResult.id))
+                    cell.viewModel = SmallGameCellViewModel(gameResult: gameResult, wishListStatus: viewModel.wishListContains(id: gameResult.id),clickedStatus: viewModel.clickedGameListContains(id: gameResult.id))
                     cell.wishListButton.tag = indexPath.row
                     cell.wishListButton.addTarget(self, action: #selector(addToWishList(_:)), for: .touchUpInside)
                 }
@@ -186,11 +184,20 @@ extension GameListViewController: UICollectionViewDelegate {
                     cell.configure(name: platformName, bgColor: Constants.categorySelectedColor, textColor: Constants.categoryUnselectedColor)
                 } else {
                     cell.configure(name: platformName, bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
-
                 }
             }
         } else {
+            print(viewModel.cardType)
+            if viewModel.cardType {
+                let cell = gamesCollectionView.cellForItem(at: indexPath) as! BigGameCell
+                cell.changeNameColor()
+            } else {
+                let cell = gamesCollectionView.cellForItem(at: indexPath) as! SmallGameCell
+                cell.changeNameColor()
+            }
+
             let gameId = viewModel.gameResult(indexPath.row)?.id
+            viewModel.addClickedGames(id: gameId ?? 0)
             performSegue(withIdentifier: Constants.detailViewSegueID, sender: gameId)
         }
     }
@@ -280,7 +287,6 @@ extension GameListViewController: UISearchBarDelegate {
 
 extension GameListViewController: GameDetailDelegate {
     func addOrRemoveWishListFromDetail(id: Int) {
-//        viewModel.addOrRemoveWishList(id: id)
-        //MARK TODO
+        viewModel.addOrRemoveWishList(id: id)
     }
 }

@@ -52,7 +52,7 @@ extension WishListViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = wishListCollectionView.dequeueReusableCell(withReuseIdentifier: Constants.Cell.smallGameCell, for: indexPath) as! SmallGameCell
         let currentGameResult = viewModel.currentGame(at: indexPath.row)
-        cell.viewModel = SmallGameCellViewModel(gameResult: currentGameResult, wishListStatus: viewModel.wishListContains(id: currentGameResult.id))
+        cell.viewModel = SmallGameCellViewModel(gameResult: currentGameResult, wishListStatus: viewModel.wishListContains(id: currentGameResult.id), clickedStatus: viewModel.clickedGameListContains(id: currentGameResult.id))
         cell.wishListButton.tag = currentGameResult.id ?? 0
         cell.wishListButton.addTarget(self, action: #selector(removeFromWishList(_:)), for: .touchUpInside)
         return cell

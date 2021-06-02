@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="VQx-xa-Aoj">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="SxT-OE-zXQ">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
@@ -96,7 +96,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dp1-Lk-GQD">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="774"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="TestImageLarge.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="D10-S2-RVu">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="D10-S2-RVu">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="233"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="D10-S2-RVu" secondAttribute="height" multiplier="390:219.4" id="mGK-Ev-zqK"/>
@@ -496,72 +496,12 @@
                         <outlet property="releaseDateView" destination="Lc8-9j-yJW" id="bVo-Fh-Dci"/>
                         <outlet property="visitRedditContainer" destination="Ur5-hq-kC7" id="UcU-9T-gDt"/>
                         <outlet property="visitWebsiteContainer" destination="LdP-aX-Vte" id="aBp-pX-Zq6"/>
+                        <outlet property="wishButton" destination="Ifh-fg-Yqh" id="1gZ-CH-yWy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T6A-Ds-5nr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="66.666666666666671" y="1118.9732142857142"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="G6x-RF-kam">
-            <objects>
-                <viewController id="VEg-3a-lTD" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="aQT-E9-fRq">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="k65-f2-tdx">
-                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QFa-Za-1C3">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1200"/>
-                                        <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="FNe-jw-eax">
-                                                <rect key="frame" x="0.0" y="0.0" width="414" height="1200"/>
-                                                <subviews>
-                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HJB-an-mt9">
-                                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1200"/>
-                                                        <color key="backgroundColor" systemColor="systemTealColor"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="1200" id="hJF-xD-ip4"/>
-                                                        </constraints>
-                                                    </view>
-                                                </subviews>
-                                            </stackView>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="FNe-jw-eax" secondAttribute="trailing" id="cJP-J5-lAI"/>
-                                            <constraint firstAttribute="bottom" secondItem="FNe-jw-eax" secondAttribute="bottom" id="tB0-VV-Z0h"/>
-                                            <constraint firstItem="FNe-jw-eax" firstAttribute="top" secondItem="QFa-Za-1C3" secondAttribute="top" id="txv-PS-eSE"/>
-                                            <constraint firstItem="FNe-jw-eax" firstAttribute="leading" secondItem="QFa-Za-1C3" secondAttribute="leading" id="vco-4o-Jtb"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="QFa-Za-1C3" firstAttribute="top" secondItem="k65-f2-tdx" secondAttribute="top" id="24P-dH-2qv"/>
-                                    <constraint firstAttribute="trailing" secondItem="QFa-Za-1C3" secondAttribute="trailing" id="OP4-eS-ItU"/>
-                                    <constraint firstItem="QFa-Za-1C3" firstAttribute="leading" secondItem="k65-f2-tdx" secondAttribute="leading" id="aSp-xE-ENa"/>
-                                    <constraint firstAttribute="bottom" secondItem="QFa-Za-1C3" secondAttribute="bottom" constant="544" id="sIp-pF-g05"/>
-                                    <constraint firstItem="QFa-Za-1C3" firstAttribute="width" secondItem="k65-f2-tdx" secondAttribute="width" id="sti-ZG-72m"/>
-                                </constraints>
-                                <viewLayoutGuide key="contentLayoutGuide" id="F5Z-T7-ave"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="2Xw-i3-6pU"/>
-                            </scrollView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="ErM-dS-6Nw"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="k65-f2-tdx" firstAttribute="leading" secondItem="ErM-dS-6Nw" secondAttribute="leading" id="5so-OL-e6b"/>
-                            <constraint firstItem="k65-f2-tdx" firstAttribute="trailing" secondItem="ErM-dS-6Nw" secondAttribute="trailing" id="szq-gi-q0a"/>
-                            <constraint firstAttribute="bottom" secondItem="k65-f2-tdx" secondAttribute="bottom" id="tzi-UM-Dg2"/>
-                            <constraint firstItem="k65-f2-tdx" firstAttribute="top" secondItem="ErM-dS-6Nw" secondAttribute="top" id="xuc-0O-7xh"/>
-                        </constraints>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="E4H-8a-zay" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1152" y="1130"/>
         </scene>
         <!--Wishlist-->
         <scene sceneID="nnp-Lu-TxC">
@@ -671,19 +611,12 @@
         </scene>
     </scenes>
     <resources>
-        <image name="TestImageLarge.jpg" width="5250" height="3450"/>
         <image name="console" width="36" height="23"/>
         <image name="gift" width="25" height="25"/>
         <image name="next" width="9" height="17"/>
         <image name="smallLayoutButton" width="30" height="30"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemTealColor">
-            <color red="0.35294117647058826" green="0.78431372549019607" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -65,7 +65,16 @@ extension SmallGameCell: SmallGameCellViewModelDelegate {
         self.gameImage.sd_setImage(with: photoURL)
     }
 
-    func prepareName(name: String) {
+    func prepareName(name: String, isClicked: Bool) {
         self.gameName.text = name
+        if isClicked {
+            self.gameName.textColor = UIColor(red: 118 / 255, green: 118 / 255, blue: 118 / 255, alpha: 1)
+        } else {
+            self.gameName.textColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 1)
+        }
+    }
+
+    func changeNameColor() {
+        gameName.textColor = UIColor(red: 118 / 255, green: 118 / 255, blue: 118 / 255, alpha: 1)
     }
 }
