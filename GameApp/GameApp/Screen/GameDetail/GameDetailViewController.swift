@@ -80,6 +80,7 @@ final class GameDetailViewController: UIViewController, LoadingShowable {
     @IBOutlet private weak var playTimeLabel: UILabel!
     @IBOutlet private weak var publishersLabel: UILabel!
     @IBOutlet private weak var wishButton: UIButton!
+    @IBOutlet private weak var detailScrollView: UIScrollView!
 
     private var isDescriptionExpand = true
     private var redditLink: String?
@@ -211,15 +212,14 @@ extension GameDetailViewController: GameDetailViewModelDelegate {
     }
 
     func setUrls(reddit: String?, website: String?) {
-        // TODO
-        if let redditUrl = reddit {
+        if let redditUrl = reddit, !redditUrl.isEmpty {
             visitRedditContainer.isHidden = false
             let tap = UITapGestureRecognizer(target: self, action: #selector(self.openRedditUrl))
             visitRedditContainer.addGestureRecognizer(tap)
             redditLink = redditUrl
         } else { visitRedditContainer.isHidden = true }
 
-        if let website = website {
+        if let website = website, !website.isEmpty {
             visitWebsiteContainer.isHidden = false
             let tap = UITapGestureRecognizer(target: self, action: #selector(self.openWebsiteUrl))
             visitWebsiteContainer.addGestureRecognizer(tap)
@@ -267,6 +267,7 @@ extension GameDetailViewController: GameDetailViewModelDelegate {
             descriptionTextViewHeight.constant = descriptionTextView.contentSize.height
             descriptionViewHeight.constant = Constants.outerViewHeight + (Constants.Description.descriptionBottomConstant - Constants.Description.descriptionTextBottomConstant) + (descriptionTextView.contentSize.height - Constants.innerTextViewHeight)
             descriptionTextBottomConstant.constant = Constants.Description.descriptionBottomConstant
+            detailScrollView.contentInset.bottom = descriptionTextView.contentSize.height - Constants.innerTextViewHeight
         } else {
             descriptionTextView.isScrollEnabled = false
             descriptionTextView.textContainer.maximumNumberOfLines = Constants.Description.maxLine
@@ -274,6 +275,7 @@ extension GameDetailViewController: GameDetailViewModelDelegate {
             descriptionTextViewHeight.constant = Constants.innerTextViewHeight
             descriptionViewHeight.constant = Constants.outerViewHeight
             descriptionTextBottomConstant.constant = Constants.Description.descriptionTextBottomConstant
+            detailScrollView.contentInset.bottom = .zero
         }
         isDescriptionExpand = !isDescriptionExpand
     }

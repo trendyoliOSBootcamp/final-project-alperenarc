@@ -465,6 +465,8 @@
                                     <constraint firstItem="dp1-Lk-GQD" firstAttribute="width" secondItem="jGN-dF-ULN" secondAttribute="width" multiplier="0.911894" id="fxh-3O-8bI"/>
                                     <constraint firstAttribute="bottom" secondItem="dp1-Lk-GQD" secondAttribute="bottom" constant="20" symbolic="YES" id="sEs-1Z-DYo"/>
                                 </constraints>
+                                <viewLayoutGuide key="contentLayoutGuide" id="PMm-fk-cYb"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="M0k-xt-qgt"/>
                             </scrollView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Gyr-YM-ruK"/>
@@ -495,6 +497,7 @@
                         <outlet property="descriptionTextViewHeight" destination="rW9-ko-U4M" id="w7B-og-kAH"/>
                         <outlet property="descriptionView" destination="l2F-VV-d6B" id="pqO-Zp-xxT"/>
                         <outlet property="descriptionViewHeight" destination="trj-8r-PLD" id="fIb-cp-Hqq"/>
+                        <outlet property="detailScrollView" destination="jGN-dF-ULN" id="reI-tI-8cz"/>
                         <outlet property="genresLabel" destination="K9Q-Bm-p7j" id="pO5-fF-Uxj"/>
                         <outlet property="genresView" destination="ebN-JV-SnB" id="Cuc-pX-R4m"/>
                         <outlet property="informationView" destination="QVZ-8Z-Mex" id="aat-d0-JOa"/>

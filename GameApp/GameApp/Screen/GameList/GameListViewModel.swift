@@ -9,6 +9,7 @@ import CoreData
 import CoreNetwork
 import Foundation
 
+// MARK: - GameListViewModel
 extension GameListViewModel {
     enum Constants {
         static let firstPage = "1"
@@ -17,6 +18,7 @@ extension GameListViewModel {
     }
 }
 
+// MARK: - GameListViewModelProtocol
 protocol GameListViewModelProtocol {
     var delegate: GameListViewModelDelegate? { get set }
     var numberOfCategory: Int { get }
@@ -25,11 +27,13 @@ protocol GameListViewModelProtocol {
     var getGames: [GameResult] { get }
     var game: Game? { get set }
     var clickedGameList: [ClickedGameItem] { get set }
+    var getSelectedCategory: CategoryPlatform? { get }
+    var getAllCategories: [CategoryPlatform] { get }
+    var getNetworkManager: NetworkManager<EndpointItem> { get }
     func load()
     func categoryPlatform(_ index: Int) -> CategoryPlatform?
     func gameResult(_ index: Int) -> GameResult?
     func setSelectedCategory(category: CategoryPlatform)
-    func getSelectedCategory() -> CategoryPlatform?
     func willDisplay(_ index: Int)
     func changeCardType()
     func addOrRemoveWishList(id: Int)
@@ -37,16 +41,14 @@ protocol GameListViewModelProtocol {
     func clickedGameListContains(id: Int?) -> Bool
     func searchGame(searchText: String)
     func searchCancel()
-    func getAllCategories() -> [CategoryPlatform]
     func addClickedGames(id: Int)
     func fetchClickedGames()
-
 }
 
+// MARK: - GameListViewModelDelegate
 protocol GameListViewModelDelegate: AnyObject {
     func setTabbarUI()
     func setSearchBarUI()
-    
     func reloadCategoryList()
     func reloadGameList()
     func showLoadingView()
@@ -54,11 +56,13 @@ protocol GameListViewModelDelegate: AnyObject {
     func getAppDelegate() -> AppDelegate
     func showEmptyCollectionView()
     func restoreCollectionView()
+    func alertShow(alertTitle: String, alertActionTitle: String, alertMessage: String)
 }
 
-final class GameListViewModel {
-    let networkManager: NetworkManager<EndpointItem>
+// MARK: - GameListViewModel
+final class GameListViewModel: ShowAlert {
     weak var delegate: GameListViewModelDelegate?
+    private let networkManager: NetworkManager<EndpointItem>
     private var categories: [CategoryPlatform] = []
     private var games: [GameResult] = []
     private var selectedCategory: CategoryPlatform?
@@ -122,12 +126,6 @@ final class GameListViewModel {
     }
 
     private func fetchSearchGameResults(searchText: String, page: String) {
-        // Search kelimesini ara
-        // bulamazsan CollectionView'i boş göster
-        // bulursan listele ve next page i ekle
-        // pagination yapısı burada da olacak.
-        // reload Collection View
-
         delegate?.showLoadingView()
         var platformStr = ""
         if let platform = selectedCategory?.id {
@@ -142,7 +140,6 @@ final class GameListViewModel {
                     if gameList.isEmpty {
                         self?.delegate?.showEmptyCollectionView()
                     } else {
-
                         if self?.nextPageNumber == Constants.firstPage {
                             self?.games = gameList
                         } else {
@@ -182,7 +179,7 @@ final class GameListViewModel {
                 wishListCoreData.append(wishListItem)
             }
         } catch {
-            print("Fetch failed !")
+            delegate?.alertShow(alertTitle: "Error", alertActionTitle: "Ok", alertMessage: "Fetch failed !")
         }
     }
 
@@ -194,7 +191,7 @@ final class GameListViewModel {
             try context.save()
             wishListCoreData.append(newWishListItem)
         } catch {
-            print("Doesn't save !")
+            delegate?.alertShow(alertTitle: "Error", alertActionTitle: "Ok", alertMessage: "Doesn't save !")
         }
     }
 
@@ -207,19 +204,19 @@ final class GameListViewModel {
                 context.delete(object as! NSManagedObject)
             }
             try context.save()
-        } catch _ {
-            print("Doesn't delete !")
+        } catch {
+            delegate?.alertShow(alertTitle: "Error", alertActionTitle: "Ok", alertMessage: "Doesn't delete !")
         }
     }
-
 }
 
+// MARK: - GameListViewModelProtocol
 extension GameListViewModel: GameListViewModelProtocol {
-    func clickedGameListContains(id: Int?) -> Bool {
-        guard let id = id else { return false }
-        return clickedGameList.contains { $0.id == id as NSNumber }
-    }
-
+    var cardType: Bool { isBigCardActive }
+    var numberOfCategory: Int { categories.count }
+    var numberOfGame: Int { games.count }
+    var getGames: [GameResult] { games }
+    var getSelectedCategory: CategoryPlatform? { selectedCategory }
     var clickedGameList: [ClickedGameItem] {
         get { clickedGames }
         set { clickedGames = newValue }
@@ -227,19 +224,26 @@ extension GameListViewModel: GameListViewModelProtocol {
 
     var game: Game? {
         get { _game }
-        set(newValue) {
-            _game = newValue
+        set { _game = newValue }
+    }
+
+    var getAllCategories: [CategoryPlatform] {
+        get { categories }
+    }
+
+    var getNetworkManager: NetworkManager<EndpointItem> {
+        get {
+            NetworkManager()
         }
     }
 
-    var cardType: Bool { isBigCardActive }
-    var numberOfCategory: Int { categories.count }
-    var numberOfGame: Int { games.count }
-    var getGames: [GameResult] { games }
-    func changeCardType() { isBigCardActive = !isBigCardActive }
-    func getSelectedCategory() -> CategoryPlatform? { selectedCategory }
     func categoryPlatform(_ index: Int) -> CategoryPlatform? { categories[safe: index] }
     func gameResult(_ index: Int) -> GameResult? { games[safe: index] }
+    func changeCardType() { isBigCardActive = !isBigCardActive }
+    func clickedGameListContains(id: Int?) -> Bool {
+        guard let id = id else { return false }
+        return clickedGameList.contains { $0.id == id as NSNumber }
+    }
 
     func addOrRemoveWishList(id: Int) {
         let entity = NSEntityDescription.entity(forEntityName: Constants.wishListEntityName, in: context)
@@ -286,7 +290,6 @@ extension GameListViewModel: GameListViewModelProtocol {
     }
 
     func searchGame(searchText: String) {
-        // Search flow started
         games = []
         nextPageNumber = Constants.firstPage
         shouldFetchNextPage = true
@@ -299,8 +302,6 @@ extension GameListViewModel: GameListViewModelProtocol {
         fetchGames(page: nextPageNumber)
     }
 
-    func getAllCategories() -> [CategoryPlatform] { categories }
-
     func addClickedGames(id: Int) {
         let entity = NSEntityDescription.entity(forEntityName: Constants.clickedGameEntityName, in: context)
         let newClickedItem = ClickedGameItem(entity: entity!, insertInto: context)
@@ -310,7 +311,8 @@ extension GameListViewModel: GameListViewModelProtocol {
                 try context.save()
                 clickedGames.append(newClickedItem)
             } catch {
-                print("Doesn't save !")
+                delegate?.alertShow(alertTitle: "Error", alertActionTitle: "Ok", alertMessage: "Doesn't save !")
+
             }
         }
     }
@@ -324,13 +326,12 @@ extension GameListViewModel: GameListViewModelProtocol {
                 clickedGameList.append(clickedGame)
             }
         } catch {
-            print("Fetch failed !")
+            delegate?.alertShow(alertTitle: "Error", alertActionTitle: "Ok", alertMessage: "Fetch failed !")
         }
     }
 
     func load() {
         delegate?.setTabbarUI()
-        
         delegate?.setSearchBarUI()
         fetchCategories()
         fetchGames(page: nextPageNumber)

@@ -14,6 +14,7 @@ extension CategoryViewCell {
     }
 }
 
+// MARK: - CategoryViewCell
 final class CategoryViewCell: UICollectionViewCell {
     @IBOutlet private weak var categoryName: UILabel!
     @IBOutlet private weak var categoryView: UIView!
@@ -21,7 +22,6 @@ final class CategoryViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         setUI()
-        
     }
 
     func setUI() {

@@ -40,8 +40,8 @@ final class GameDetailViewModel {
     private let networkManager: NetworkManager<EndpointItem>
     weak var delegate: GameDetailViewModelDelegate?
     weak var gameDetailDelegate: GameDetailDelegate?
-    var gameId: Int? // TODO
-    var isOnWishList: Bool = false // TODO
+    var gameId: Int?
+    var isOnWishList: Bool = false
     private var _game: Game?
 
     init(networkManager: NetworkManager<EndpointItem>) {

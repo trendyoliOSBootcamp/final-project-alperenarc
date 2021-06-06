@@ -6,14 +6,16 @@
 //
 
 import UIKit
-import CoreNetwork // TODO
 
+// MARK: - GameListViewController
 extension GameListViewController {
     enum Constants {
-        static let barTintColor = UIColor(red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
-        static let unselectedItemTintColor = UIColor(red: 117 / 255, green: 117 / 255, blue: 117 / 255, alpha: 1)
-        static let categoryUnselectedColor = UIColor(red: 45 / 255, green: 45 / 255, blue: 45 / 255, alpha: 1)
-        static let categorySelectedColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 1)
+        enum Category {
+            static let barTintColor = UIColor(red: 22 / 255, green: 22 / 255, blue: 22 / 255, alpha: 0.1)
+            static let unselectedItemTintColor = UIColor(red: 117 / 255, green: 117 / 255, blue: 117 / 255, alpha: 1)
+            static let categoryUnselectedColor = UIColor(red: 45 / 255, green: 45 / 255, blue: 45 / 255, alpha: 1)
+            static let categorySelectedColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 1)
+        }
         enum Cell {
             static let categoryCell = "CategoryViewCell"
             static let categoryCellHeight: CGFloat = 36
@@ -30,15 +32,18 @@ extension GameListViewController {
             static let categoryItemPadding: CGFloat = 12
         }
         static let detailViewSegueID = "GameDetailViewSegue"
+        static let bigButton = "bigLayoutButton"
+        static let smallButton = "smallLayoutButton"
     }
 }
 
+// MARK: - GameListViewController
 final class GameListViewController: UIViewController {
     @IBOutlet private weak var categoryCollectionView: UICollectionView!
     @IBOutlet private weak var gamesCollectionView: UICollectionView!
     @IBOutlet private weak var cardTypeButton: UIButton!
     private let searchController = UISearchController()
-    
+
     var viewModel: GameListViewModelProtocol! {
         didSet {
             viewModel.delegate = self
@@ -65,22 +70,21 @@ final class GameListViewController: UIViewController {
     @IBAction private func cardTypeAction() {
         viewModel.changeCardType()
         viewModel.cardType ?
-        cardTypeButton.setImage(UIImage(named: "bigLayoutButton"), for: .normal):
-            cardTypeButton.setImage(UIImage(named: "smallLayoutButton"), for: .normal)
+        cardTypeButton.setImage(UIImage(named: Constants.bigButton), for: .normal):
+            cardTypeButton.setImage(UIImage(named: Constants.smallButton), for: .normal)
         reloadGameList()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.destination {
         case let vc as GameDetailViewController:
-            let vm = GameDetailViewModel(networkManager: NetworkManager()) // TODO
+            let vm = GameDetailViewModel(networkManager: viewModel.getNetworkManager) 
             let gameModel = viewModel.game
             vm.gameDetailDelegate = self
             vm.gameId = sender as? Int
             vm.isOnWishList = viewModel.wishListContains(id: sender as? Int)
             vm.game = gameModel
             vc.viewModel = vm
-            break
         default:
             break
         }
@@ -100,7 +104,7 @@ extension GameListViewController: UICollectionViewDataSource {
 
             let currentCategoryPlatform = viewModel.categoryPlatform(indexPath.row)
             if let platformName = currentCategoryPlatform?.name {
-                cell.configure(name: platformName, bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
+                cell.configure(name: platformName, bgColor: Constants.Category.categoryUnselectedColor, textColor: Constants.Category.categorySelectedColor)
             }
             return cell
         } else {
@@ -171,13 +175,11 @@ extension GameListViewController: UICollectionViewDelegateFlowLayout {
             }
         }
     }
-
 }
 
 // MARK: - UICollectionViewDelegate
 extension GameListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
         if collectionView == categoryCollectionView {
             let cell = categoryCollectionView.cellForItem(at: indexPath) as! CategoryViewCell
             guard let category = viewModel.categoryPlatform(indexPath.row) else { return }
@@ -185,10 +187,10 @@ extension GameListViewController: UICollectionViewDelegate {
             let currentCategoryPlatform = viewModel.categoryPlatform(indexPath.row)
 
             if let platformName = currentCategoryPlatform?.name {
-                if viewModel.getSelectedCategory() == currentCategoryPlatform {
-                    cell.configure(name: platformName, bgColor: Constants.categorySelectedColor, textColor: Constants.categoryUnselectedColor)
+                if viewModel.getSelectedCategory == currentCategoryPlatform {
+                    cell.configure(name: platformName, bgColor: Constants.Category.categorySelectedColor, textColor: Constants.Category.categoryUnselectedColor)
                 } else {
-                    cell.configure(name: platformName, bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
+                    cell.configure(name: platformName, bgColor: Constants.Category.categoryUnselectedColor, textColor: Constants.Category.categorySelectedColor)
                 }
             }
         } else {
@@ -208,11 +210,11 @@ extension GameListViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if collectionView == categoryCollectionView {
-            if let selectedCategory = viewModel.getSelectedCategory(), let row = viewModel.getAllCategories().firstIndex(of: selectedCategory) {
+            if let selectedCategory = viewModel.getSelectedCategory, let row = viewModel.getAllCategories.firstIndex(of: selectedCategory) {
                 let previousIndexPath = IndexPath(row: row, section: 0)
                 guard let previousCell = categoryCollectionView.cellForItem(at: previousIndexPath) as? CategoryViewCell else { return }
                 let previousCategory = viewModel.categoryPlatform(previousIndexPath.row)
-                previousCell.configure(name: previousCategory?.name ?? "", bgColor: Constants.categoryUnselectedColor, textColor: Constants.categorySelectedColor)
+                previousCell.configure(name: previousCategory?.name ?? "", bgColor: Constants.Category.categoryUnselectedColor, textColor: Constants.Category.categorySelectedColor)
             }
         }
     }
@@ -223,7 +225,11 @@ extension GameListViewController: UICollectionViewDelegate {
 }
 
 // MARK: - GameListViewModelDelegate
-extension GameListViewController: GameListViewModelDelegate {
+extension GameListViewController: GameListViewModelDelegate, ShowAlert {
+    func alertShow(alertTitle: String, alertActionTitle: String, alertMessage: String) {
+        showError(alertTitle: alertTitle, alertActionTitle: alertActionTitle, alertMessage: alertMessage, ownerVC: self)
+    }
+
     func showEmptyCollectionView() {
         gamesCollectionView.setEmptyMessage(message: "No game has been found !")
     }
@@ -254,8 +260,8 @@ extension GameListViewController: GameListViewModelDelegate {
 
     func setTabbarUI() {
         tabBarController?.tabBar.tintColor = .white
-        tabBarController?.tabBar.barTintColor = Constants.barTintColor
-        tabBarController?.tabBar.unselectedItemTintColor = Constants.unselectedItemTintColor
+        tabBarController?.tabBar.barTintColor = Constants.Category.barTintColor
+        tabBarController?.tabBar.unselectedItemTintColor = Constants.Category.unselectedItemTintColor
         tabBarController?.tabBar.clipsToBounds = true
     }
 
@@ -266,7 +272,6 @@ extension GameListViewController: GameListViewModelDelegate {
         searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
-
     }
 }
 
@@ -282,6 +287,7 @@ extension GameListViewController: UISearchBarDelegate {
     }
 }
 
+// MARK: - GameDetailDelegate
 extension GameListViewController: GameDetailDelegate {
     func addOrRemoveWishListFromDetail(id: Int) {
         viewModel.addOrRemoveWishList(id: id)

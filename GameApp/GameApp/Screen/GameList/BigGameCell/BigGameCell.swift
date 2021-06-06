@@ -29,8 +29,7 @@ final class BigGameCell: UICollectionViewCell {
     @IBOutlet private weak var playTime: UILabel!
     @IBOutlet private weak var metacritic: UILabel!
     @IBOutlet private weak var metacriticContainer: UIView!
-    @IBOutlet weak var wishListView: UIView!
-    @IBOutlet weak var wishListButton: UIButton!
+    @IBOutlet private weak var wishListView: UIView!
     @IBOutlet private weak var descriptionContainer: UIView!
     @IBOutlet private weak var genreView: UIStackView!
     @IBOutlet private weak var releaseDateView: UIStackView!
@@ -43,7 +42,8 @@ final class BigGameCell: UICollectionViewCell {
     @IBOutlet private weak var thirdBadgeLabel: UILabel!
     @IBOutlet private weak var plusBadge: UIView!
     @IBOutlet private weak var plusBadgeLabel: UILabel!
-
+    @IBOutlet  weak var wishListButton: UIButton!
+    
     var viewModel: BigGameCellViewModelProtocol! {
         didSet {
             viewModel.delegate = self

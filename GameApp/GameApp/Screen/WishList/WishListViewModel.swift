@@ -51,7 +51,7 @@ final class WishListViewModel {
     }
 
     private func fetchGame(id: NSNumber, completion: @escaping () -> ()) {
-        networkManager.request(endpoint: .game(id: Int(id)), type: Game.self) { [weak self] result in
+        networkManager.request(endpoint: .game(id: id as! Int), type: Game.self) { [weak self] result in
             switch result {
             case .success(let response):
                 let gameResult = GameResult(id: response.id ?? 0,
